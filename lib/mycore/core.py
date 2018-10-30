@@ -74,7 +74,7 @@ class MyHomeMate:
         _LOGGER.info("Starting Home Assistant")
         # self.state = CoreState.starting
 
-        setattr(self.loop, '_thread_ident', threading.get_ident())
+        # setattr(self.loop, '_thread_ident', threading.get_ident())
         # self.bus.async_fire(EVENT_HOMEASSISTANT_START)
 
         try:
