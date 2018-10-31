@@ -44,8 +44,10 @@ def callb(bot, update):
         elif etype == 'script':
             try:
                 exec(ebody)
-            except Exception as e:
+            except ScriptError as e:
                 mes = str(e)
+            except Exception as e:
+                mes = 'ERROR: {}'.format(str(e))
 
     if mes:
         update.message.reply_text(mes)
