@@ -1,23 +1,26 @@
-# -*- encoding: utf-8 -*-
-
-# import requests
 
 from telegram.ext import Updater, MessageHandler, Filters
 
 from ut import telebot
 
+
+class ScriptError(Exception):
+    pass
+
+
+def send_message(mess):
+    raise ScriptError(mess)
+
+
 updater = Updater(bot=telebot)
 
 
-# if req in ['/ip', 'ip']:
-#     resp = requests.get('https://api.ipify.org/')
-#     update.message.reply_text(resp.text)
 db = [
     {
         'name': 'ip',
         'command': 'ip',
         'type': 'script',
-        'body': """import requests;resp = requests.get('https://api.ipify.org/');resp.text""",
+        'body': """import requests;resp = requests.get('https://api.ipify.org/');send_message(resp.text)""",
     },
     {
         'name': 'simple',
@@ -28,12 +31,6 @@ db = [
 ]
 
 conf = {r['command']: r for r in db}
-
-scr = """import requests;resp = requests.get('https://api.ipify.org/');mes = resp.text"""
-res = exec(scr)
-print(res)
-
-exit()
 
 
 def callb(bot, update):
@@ -46,7 +43,7 @@ def callb(bot, update):
             mes = ebody
         elif etype == 'script':
             try:
-                mes = exec(ebody)
+                exec(ebody)
             except Exception as e:
                 mes = str(e)
 
