@@ -1,7 +1,16 @@
-
 from telegram.ext import Updater, MessageHandler, Filters
 
 from ut import telebot
+
+import os, django, sys
+sys.path.append('{}/../../'.format(os.path.dirname(os.path.abspath(__file__))))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
+django.setup()
+
+from myhome.models import Component
+
+comp = Component.objects.get(name='telegram_bot')
+print(comp.data)
 
 
 class ScriptError(Exception):

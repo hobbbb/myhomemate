@@ -5,8 +5,8 @@ from telegram.utils.request import Request
 
 
 token = '618430543:AAHagGT853T1v_x1TlhgYLVy0SxyfpwlgUc'
-proxy_url = None
-proxy_params = None
+proxy_url = 'socks5://94.130.6.244:1080'
+proxy_params = {'username': 'friends', 'password': 'asdfghjkl'}
 chat_id = 41129935
 
 
