@@ -1,5 +1,7 @@
-# -*- encoding: utf-8 -*-
+# import os
+# import sys
+# sys.path.append('{}/../../'.format(os.path.dirname(os.path.abspath(__file__))))
 
-from ut import telebot, chat_id
+from components.telegram_bot import telebot, chat_id
 
 telebot.send_message(chat_id, 'test')

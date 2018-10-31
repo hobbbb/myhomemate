@@ -1,27 +1,12 @@
 from telegram.ext import Updater, MessageHandler, Filters
 
-from ut import telebot
-
-import os, django, sys
-sys.path.append('{}/../../'.format(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
-django.setup()
-
-from myhome.models import Component
-
-comp = Component.objects.get(name='telegram_bot')
-print(comp.data)
+from components.telegram_bot import bot_init
 
 
-class ScriptError(Exception):
-    pass
-
-
-def send_message(mess):
-    raise ScriptError(mess)
-
-
-updater = Updater(bot=telebot)
+def set_plato():
+    bot = bot_init()
+    pol = TelePoll(bot)
+    pol.start_polling()
 
 
 db = [
@@ -40,6 +25,14 @@ db = [
 ]
 
 conf = {r['command']: r for r in db}
+
+
+class ScriptError(Exception):
+    pass
+
+
+def send_message(mess):
+    raise ScriptError(mess)
 
 
 def callb(bot, update):
@@ -62,6 +55,18 @@ def callb(bot, update):
         update.message.reply_text(mes)
 
 
-updater.dispatcher.add_handler(MessageHandler(Filters.all, callb))
-updater.start_polling()
-# updater.idle()
+class TelePoll():
+    def __init__(self, bot):
+        self.updater = Updater(bot=bot, workers=4)
+
+        self.updater.dispatcher.add_handler(MessageHandler(Filters.all, callb))
+        # self.updater.dispatcher.add_error_handler(process_error)
+
+    def start_polling(self):
+        self.updater.start_polling()
+
+    def stop_polling(self):
+        self.updater.stop()
+
+    def process_update(self, bot, update):
+        self.process_message(update.to_dict())
