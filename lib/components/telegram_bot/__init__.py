@@ -3,14 +3,6 @@
 from telegram import Bot
 from telegram.utils.request import Request
 
-import django
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
-django.setup()
-
-from myhome.models import Component
-
-
 # class TeleBot:
 #     def __init__(self):
 
@@ -35,13 +27,15 @@ from myhome.models import Component
 
 
 def bot_init():
+    from myhome.models import Component
+
     comp = Component.objects.get(name='telegram_bot')
     config = comp.data
 
     token = config['token']
     proxy_url = config['proxy_url']
     proxy_params = config['proxy_params']
-    chat_id = config['chat_id']
+    # chat_id = config['chat_id']
 
     if proxy_url is not None:
         request = Request(con_pool_size=8, proxy_url=proxy_url, urllib3_proxy_kwargs=proxy_params)
