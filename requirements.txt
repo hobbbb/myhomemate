@@ -12,6 +12,7 @@ python-telegram-bot==11.1.0
 PySocks==1.6.8
 
 
+django-bootstrap4==0.0.7
 
 # -------
 # attrs==18.2.0

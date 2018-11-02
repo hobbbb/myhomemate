@@ -1,17 +1,20 @@
-token: <input type="text" name="token" value="{{ component.data.token }}" style="width:400px">
-<br>
-proxy_url: <input type="text" name="proxy_url" value="{{ component.data.proxy_url }}" style="width:400px">
-<br>
-proxy_user: <input type="text" name="proxy_user" value="{{ component.data.proxy_user }}" style="width:400px">
-<br>
-proxy_password: <input type="text" name="proxy_password" value="{{ component.data.proxy_password }}" style="width:400px">
+{% extends "base.html" %}
 
-<br>
-<br>
+{% load bootstrap4 %}
 
-{{ component.data }}
+{% block content %}
+<div class="m-3">
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-dark">Сохранить</button>
+        {% endbuttons %}
+    </form>
+</div>
 
+    <br>
+    <br>
 
-{% for c in commands %}
-    {{ c }}
-{% endfor %}
+    {{ component.data }}
+{% endblock %}

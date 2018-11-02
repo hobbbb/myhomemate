@@ -1,16 +1,13 @@
 import importlib
 
-from django.contrib import admin
 from django.urls import path, include
 
 # from components.utils import get_urls_modules
-# from myhome import views
+from myhome import views
 
 urlpatterns = [
-    # path('components/',             views.component_list),
-    # path('components/<int:id>/',    views.component_setup),
-
-    path('admin/', admin.site.urls),
+    path('components/',             views.component_list),
+    path('components/<int:id>/',    views.component_setup),
 ]
 
 
