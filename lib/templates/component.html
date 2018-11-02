@@ -1,0 +1,17 @@
+token: <input type="text" name="token" value="{{ component.data.token }}" style="width:400px">
+<br>
+proxy_url: <input type="text" name="proxy_url" value="{{ component.data.proxy_url }}" style="width:400px">
+<br>
+proxy_user: <input type="text" name="proxy_user" value="{{ component.data.proxy_user }}" style="width:400px">
+<br>
+proxy_password: <input type="text" name="proxy_password" value="{{ component.data.proxy_password }}" style="width:400px">
+
+<br>
+<br>
+
+{{ component.data }}
+
+
+{% for c in commands %}
+    {{ c }}
+{% endfor %}

@@ -1,1 +1,4 @@
-Hello
+{% for c in components %}
+    {{ c.id }} {{ c.name }}
+    <a href="/components/{{ c.id }}">Настройка</a>
+{% endfor %}
