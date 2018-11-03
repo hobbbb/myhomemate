@@ -1,4 +1,4 @@
-# import importlib
+import importlib
 import json
 
 from django.http import HttpResponseRedirect
@@ -7,10 +7,11 @@ from django.shortcuts import render
 from myhome import models as myhome_models
 from components import models as component_models
 
-from myhome.forms import TelegramBotForm
-
-def component_list(request):
-    components = myhome_models.Component.objects.all()
+def component_list(request, filt='active'):
+    cond = {}
+    if filt == 'active':
+        cond['is_active'] = True
+    components = myhome_models.Component.objects.filter(**cond).all()
     # for c in components:
     #     c.has_setup = 1
     #     try:
@@ -27,14 +28,19 @@ def component_list(request):
 def component_setup(request, id):
     component = myhome_models.Component.objects.get(id=id)
 
+    try:
+        module = importlib.import_module('components.{}.registration'.format(component.name))
+    except ModuleNotFoundError:
+        raise()
+
     if request.method == 'POST':
-        form = TelegramBotForm(request.POST)
+        form = module.SetupForm(request.POST)
         if form.is_valid():
             component.data_raw = json.dumps(form.cleaned_data)
             component.save()
             return HttpResponseRedirect('/components/1/')
     else:
-        form = TelegramBotForm(component.data)
+        form = module.SetupForm(component.data)
 
     data = {
         'component': component,

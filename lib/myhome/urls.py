@@ -6,8 +6,9 @@ from django.urls import path, include
 from myhome import views
 
 urlpatterns = [
-    path('components/',             views.component_list),
-    path('components/<int:id>/',    views.component_setup),
+    path('components/',                 views.component_list, name='components'),
+    path('components/<str:filt>/',      views.component_list, name='components_filt'),
+    path('components/<int:id>/',        views.component_setup),
 ]
 
 

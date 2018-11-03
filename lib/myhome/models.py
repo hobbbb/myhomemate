@@ -5,18 +5,20 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class Room(models.Model):
-    name = models.CharField(max_length=50)
+# class Room(models.Model):
+#     name = models.CharField(max_length=50)
 
 
-class Device(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(max_length=50)
+# class Device(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+#     name = models.CharField(max_length=50)
 
 
 class Component(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    human_name = models.CharField(max_length=50)
     data_raw = models.TextField(db_column='data')
+    is_active = models.BooleanField(default=0)
 
     def __str__(self):
         return self.name
