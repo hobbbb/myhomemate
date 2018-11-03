@@ -20,7 +20,8 @@ def component_list(request, filt='active'):
     #         c.has_setup = 0
 
     data = {
-        'components': components
+        'filt': filt,
+        'components': components,
     }
     return render(request, 'components.html', data)
 
@@ -29,7 +30,7 @@ def component_setup(request, id):
     component = myhome_models.Component.objects.get(id=id)
 
     try:
-        module = importlib.import_module('components.{}.registration'.format(component.name))
+        module = importlib.import_module('components.{}'.format(component.name))
     except ModuleNotFoundError:
         raise()
 

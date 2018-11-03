@@ -1,7 +1,25 @@
 # -*- encoding: utf-8 -*-
 
+from django import forms
+
+from myhome.api import register_component, get_component_config
+
 from telegram import Bot
 from telegram.utils.request import Request
+
+
+def register():
+    register_component({
+        'human_name': 'Телеграм',
+    })
+
+
+class SetupForm(forms.Form):
+    token = forms.CharField(label='Токен', max_length=100)
+    proxy_url = forms.CharField(max_length=100, required=False)
+    proxy_user = forms.CharField(max_length=100, required=False)
+    proxy_password = forms.CharField(max_length=100, required=False, widget=forms.PasswordInput)
+
 
 # class TeleBot:
 #     def __init__(self):
@@ -27,10 +45,7 @@ from telegram.utils.request import Request
 
 
 def bot_init():
-    from myhome.models import Component
-
-    comp = Component.objects.get(name='telegram_bot')
-    config = comp.data
+    config = get_component_config('telegram_bot')
 
     token = config['token']
     proxy_url = config['proxy_url']

@@ -3,8 +3,12 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
 django.setup()
 
-from components.telegram_bot import polling, registration
+from components import telegram_bot, mikrotik
+from components.mikrotik import scanner
 
-# polling.set_plato()
+telegram_bot.register()
+mikrotik.register()
 
-registration.setup_component()
+# telegram_bot.polling.set_plato()
+
+scanner.test()

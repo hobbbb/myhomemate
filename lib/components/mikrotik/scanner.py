@@ -1,6 +1,8 @@
 import librouteros
 import logging
 
+from myhome.api import get_component_config
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -154,11 +156,14 @@ class MikrotikScanner():
         return True
 
 
-# s = MikrotikScanner(dict(
-#     host = '192.168.88.1',
-#     username = 'admin',
-#     password = 'VPavelB1983',
-#     port = 8728,
-# ))
+def test():
+    config = get_component_config('mikrotik')
 
-# print(s.last_results)
+    s = MikrotikScanner(dict(
+        host = config['host'],
+        port = config['port'],
+        username = config['user'],
+        password = config['password'],
+    ))
+
+    print(s.last_results)
