@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import asyncio
 import librouteros
 import logging
 
@@ -172,7 +173,25 @@ class MikrotikScanner():
         return True
 
 
-def run_component():
+def run():
+    config = get_component_config()
+    if not config:
+        return
+
+    s = MikrotikScanner(dict(
+        host=config['host'],
+        port=config['port'],
+        username=config['user'],
+        password=config['password'],
+    ))
+
+    update_devices(s.last_results)
+    print(s.last_results)
+
+
+async def aio_run():
+    await asyncio.sleep(2)
+
     config = get_component_config()
     if not config:
         return

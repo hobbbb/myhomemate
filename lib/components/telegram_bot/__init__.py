@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import asyncio
+
 from django import forms
 
 from myhome.api import register_component, get_component_config
@@ -60,5 +62,10 @@ def bot_init():
     return Bot(token=token, request=request)
 
 
-def run_component():
+def run():
     print('yyyeeee')
+
+
+async def aio_run():
+    await asyncio.sleep(1)
+    print("telegram_bot")
