@@ -1,11 +1,8 @@
-import inspect
-import re
-
-from myhome import models
+from myhome import models, utils
 
 
 def register_component(config):
-    component_name = re.sub(r'(^lib/components/)|(/__init__.py$)', '', inspect.stack()[1][1]).replace('/', '.')
+    component_name = utils.component_name()
     component = models.Component.objects.filter(name=component_name).first()
     if component:
         component.human_name = config.get('human_name')
@@ -18,16 +15,18 @@ def register_component(config):
     return component
 
 
-def get_component_config(name):
-    component = models.Component.objects.get(name=name)
+def get_component_config():
+    component_name = utils.component_name()
+    component = models.Component.objects.get(name=component_name)
     return component.data
+
+
+def update_devices(devices):
+    component_name = utils.component_name()
+    component = models.Component.objects.get(name=component_name)
+    print(component.devices_set)
 
 
 def get_device_config(name):
     device = models.Device.objects.get(name=name)
     return device.data
-
-
-def update_devices(name):
-    comp = models.Component.objects.get(name=name)
-    return comp.data

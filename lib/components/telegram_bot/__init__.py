@@ -45,7 +45,7 @@ class SetupForm(forms.Form):
 
 
 def bot_init():
-    config = get_component_config('telegram_bot')
+    config = get_component_config()
 
     token = config['token']
     proxy_url = config['proxy_url']

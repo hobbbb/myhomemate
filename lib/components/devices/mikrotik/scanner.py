@@ -157,13 +157,16 @@ class MikrotikScanner():
 
 
 def test():
-    config = get_component_config('mikrotik')
+    config = get_component_config()
+    if not config:
+        _LOGGER.warning('component without config')
+        return
 
     s = MikrotikScanner(dict(
-        host = config['host'],
-        port = config['port'],
-        username = config['user'],
-        password = config['password'],
+        host=config['host'],
+        port=config['port'],
+        username=config['user'],
+        password=config['password'],
     ))
 
     print(s.last_results)
