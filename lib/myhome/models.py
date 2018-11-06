@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class DataJsonMixin(models.Model):
+class DataJsonMixin(object):
     data_raw = models.TextField(db_column='data')
 
     @property
@@ -22,16 +22,16 @@ class DataJsonMixin(models.Model):
 #     name = models.CharField(max_length=50)
 
 
-class Component(DataJsonMixin):
-    name = models.CharField(max_length=50, unique=True)
-    human_name = models.CharField(max_length=50)
+class Component(DataJsonMixin, models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    human_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=0)
 
     def __str__(self):
         return self.name
 
 
-class Device(DataJsonMixin):
+class Device(DataJsonMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     component = models.ForeignKey(Component, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
