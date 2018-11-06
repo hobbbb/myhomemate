@@ -1,8 +1,10 @@
 import importlib
 import json
 
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 from myhome import models as myhome_models
 from components import models as component_models
@@ -39,7 +41,7 @@ def component_setup(request, id):
         if form.is_valid():
             component.data_raw = json.dumps(form.cleaned_data)
             component.save()
-            return HttpResponseRedirect('/components/1/')
+            return HttpResponseRedirect(reverse('act_components'))
     else:
         form = module.SetupForm(component.data)
 
@@ -48,3 +50,47 @@ def component_setup(request, id):
         'form': form,
     }
     return render(request, 'component.html', data)
+
+
+def device_list(request):
+    data = {}
+    return render(request, 'devices.html', data)
+
+
+def device_setup(request, id):
+    pass
+
+
+def person_list(request):
+    persons = User.objects.all()
+    data = {
+        'persons': persons,
+    }
+    return render(request, 'persons.html', data)
+
+
+def person_setup(request, id):
+    pass
+
+
+def room_list(request):
+    data = {}
+    return render(request, 'rooms.html', data)
+
+
+def room_setup(request, id):
+    pass
+
+
+def zone_list(request):
+    data = {}
+    return render(request, 'zones.html', data)
+
+
+def zone_setup(request, id):
+    pass
+
+
+def log_list(request):
+    data = {}
+    return render(request, 'logs.html', data)

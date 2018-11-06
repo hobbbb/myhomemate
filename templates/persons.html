@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="text-right my-3"><button type="button" class="btn btn-outline-dark">Добавить</button></div>
+
+    {% if persons|length > 0 %}
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th class="col-sm-10">Логин</th>
+                <th class="col-sm-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in persons %}
+            <tr>
+                <td>{{ p.username }}</td>
+                <td><a href="/persons/{{ p.id }}"><span class="oi oi-wrench"></span></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock %}

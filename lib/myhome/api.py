@@ -19,5 +19,15 @@ def register_component(config):
 
 
 def get_component_config(name):
+    component = models.Component.objects.get(name=name)
+    return component.data
+
+
+def get_device_config(name):
+    device = models.Device.objects.get(name=name)
+    return device.data
+
+
+def update_devices(name):
     comp = models.Component.objects.get(name=name)
     return comp.data

@@ -5,26 +5,37 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-# class Room(models.Model):
-#     name = models.CharField(max_length=50)
-
-
-# class Device(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-#     name = models.CharField(max_length=50)
-
-
-class Component(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    human_name = models.CharField(max_length=50)
+class DataJsonMixin(models.Model):
     data_raw = models.TextField(db_column='data')
-    is_active = models.BooleanField(default=0)
-
-    def __str__(self):
-        return self.name
 
     @property
     def data(self):
         if not self.data_raw:
             return
         return json.loads(self.data_raw)
+
+# class Room(models.Model):
+#     name = models.CharField(max_length=50)
+
+
+# class Zone(models.Model):
+#     name = models.CharField(max_length=50)
+
+
+class Component(DataJsonMixin):
+    name = models.CharField(max_length=50, unique=True)
+    human_name = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=0)
+
+    def __str__(self):
+        return self.name
+
+
+class Device(DataJsonMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    component = models.ForeignKey(Component, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, unique=True)
+    is_tracking = models.BooleanField(default=0)
+
+    def __str__(self):
+        return self.name

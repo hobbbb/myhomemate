@@ -43,13 +43,19 @@
                             <a class="nav-link active" href="{% url 'act_components' %}">Компоненты</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Люди</a>
+                            <a class="nav-link" href="{% url 'device_list' %}">Устройства</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Комнаты</a>
+                            <a class="nav-link" href="{% url 'person_list' %}">Люди</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Логи</a>
+                            <a class="nav-link" href="{% url 'room_list' %}">Комнаты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'zone_list' %}">Зоны</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'log_list' %}">Логи</a>
                         </li>
                     </ul>
                 </div>
