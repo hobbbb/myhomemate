@@ -54,7 +54,10 @@ def component_setup(request, id):
 
 
 def device_list(request):
-    data = {}
+    devices = myhome_models.Device.objects.all()
+    data = {
+        'devices': devices,
+    }
     return render(request, 'devices.html', data)
 
 

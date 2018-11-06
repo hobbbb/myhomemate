@@ -4,7 +4,7 @@ import librouteros
 import logging
 
 from django import forms
-from myhome.api import register_component, get_component_config
+from myhome.api import register_component, get_component_config, update_devices
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -172,10 +172,9 @@ class MikrotikScanner():
         return True
 
 
-def run():
+def run_component():
     config = get_component_config()
     if not config:
-        _LOGGER.warning('component without config')
         return
 
     s = MikrotikScanner(dict(
@@ -185,4 +184,5 @@ def run():
         password=config['password'],
     ))
 
+    update_devices(s.last_results)
     print(s.last_results)

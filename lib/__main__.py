@@ -15,4 +15,4 @@ for c in qs:
     except ModuleNotFoundError:
         raise()
 
-    module.run()
+    module.run_component()

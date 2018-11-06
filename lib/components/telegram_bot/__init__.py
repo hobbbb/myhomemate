@@ -58,3 +58,7 @@ def bot_init():
         request = Request(con_pool_size=8)
 
     return Bot(token=token, request=request)
+
+
+def run_component():
+    print('yyyeeee')
