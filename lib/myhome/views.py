@@ -5,7 +5,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from myhome import models as myhome_models
-from components import models as component_models
+# from components import models as component_models
+
 
 def component_list(request, filt='active'):
     cond = {}

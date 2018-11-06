@@ -3,8 +3,9 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
 django.setup()
 
-from components import telegram_bot, mikrotik
-from components.mikrotik import scanner
+from components import telegram_bot
+from components.devices import mikrotik
+from components.devices.mikrotik import scanner
 
 telegram_bot.register()
 mikrotik.register()
