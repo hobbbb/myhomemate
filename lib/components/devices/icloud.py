@@ -46,10 +46,17 @@ async def aio_run():
 
     last_results = []
     for d in result['content']:
-        print(d)
+        # print(d.keys())
+        # print(d['batteryLevel'])
         last_results.append({
             'name': d['name'],
             'human_name': d['name'],
+            'data': {
+                # 'latitude': d['location']['latitude'],
+                # 'longitude': d['location']['longitude'],
+                'battery': d['batteryLevel']
+                # 'batteryStatus': d['batteryStatus'],
+            },
         })
 
     # update_devices(last_results)
