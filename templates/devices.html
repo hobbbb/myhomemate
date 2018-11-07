@@ -15,14 +15,18 @@
         <thead>
             <tr>
                 <th class="col-sm-10">Устройство</th>
-                <th class="col-sm-2"></th>
+                {% if editable %}
+                    <th class="col-sm-2"></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for d in devices %}
             <tr>
                 <td>{{ d.human_name }}</td>
-                <td><a href="/devices/{{ d.id }}"><span class="oi oi-wrench"></span></a></td>
+                {% if editable %}
+                    <td><a href="/devices/{{ d.id }}"><span class="oi oi-wrench"></span></a></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

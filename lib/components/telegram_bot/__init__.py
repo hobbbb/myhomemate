@@ -16,7 +16,7 @@ def register():
     })
 
 
-class SetupForm(forms.Form):
+class ComponentSetupForm(forms.Form):
     token = forms.CharField(label='Токен', max_length=100)
     proxy_url = forms.CharField(max_length=100, required=False)
     proxy_user = forms.CharField(max_length=100, required=False)

@@ -38,13 +38,13 @@ def component_setup(request, id):
         raise()
 
     if request.method == 'POST':
-        form = module.SetupForm(request.POST)
+        form = module.ComponentSetupForm(request.POST)
         if form.is_valid():
             component.data_raw = json.dumps(form.cleaned_data)
             component.save()
             return HttpResponseRedirect(reverse('act_components'))
     else:
-        form = module.SetupForm(component.data)
+        form = module.ComponentSetupForm(component.data)
 
     data = {
         'component': component,
@@ -53,16 +53,45 @@ def component_setup(request, id):
     return render(request, 'component.html', data)
 
 
-def device_list(request):
-    devices = myhome_models.Device.objects.all()
+def device_list(request, component_id=None):
+    component = myhome_models.Component.objects.get(id=1)
+
+    try:
+        module = importlib.import_module('components.{}'.format(component.name))
+    except ModuleNotFoundError:
+        raise()
+
+    editable = true if hasattr(module, 'DeviceSetupForm') else False
+
     data = {
-        'devices': devices,
+        'devices': component.device_set.all(),
+        'editable': editable,
     }
     return render(request, 'devices.html', data)
 
 
 def device_setup(request, id):
-    pass
+    device = myhome_models.Device.objects.get(id=id)
+
+    try:
+        module = importlib.import_module('components.{}'.format(device.component.name))
+    except ModuleNotFoundError:
+        raise()
+
+    if request.method == 'POST':
+        form = module.DeviceSetupForm(request.POST)
+        # if form.is_valid():
+        #     component.data_raw = json.dumps(form.cleaned_data)
+        #     component.save()
+        #     return HttpResponseRedirect(reverse('act_components'))
+    else:
+        form = module.DeviceSetupForm(device.data)
+
+    data = {
+        'device': device,
+        'form': form,
+    }
+    return render(request, 'device.html', data)
 
 
 def person_list(request):
