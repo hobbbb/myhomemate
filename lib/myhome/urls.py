@@ -17,6 +17,8 @@ urlpatterns = [
     path('rooms/<int:id>/',             views.room_setup),
     path('zones/',                      views.zone_list, name='zone_list'),
     path('zones/<int:id>/',             views.zone_setup),
+    path('automations/',                views.automation_list, name='automation_list'),
+    path('automations/<int:id>/',       views.automation_setup, name='automation_setup'),
     path('logs/',                       views.log_list, name='log_list'),
 ]
 

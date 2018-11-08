@@ -30,7 +30,9 @@ async def aio_run():
     if not config:
         return
 
-    url = 'https://{}:{}@fmipmobile.icloud.com/fmipservice/device/{}/initClient'.format(config['user'], config['password'], config['user'])
+    url = 'https://{}:{}@fmipmobile.icloud.com/fmipservice/device/{}/initClient'.format(
+        config['user'], config['password'], config['user']
+    )
     try:
         http_resp = requests.post(url, timeout=2, allow_redirects=False, verify=False)
     except requests.exceptions.RequestException as e:

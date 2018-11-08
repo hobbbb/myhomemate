@@ -6,15 +6,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from myhome import models as myhome_models
-# from components import models as component_models
+from myhome import models
 
 
 def component_list(request, filt='active'):
     cond = {}
     if filt == 'active':
         cond['is_active'] = True
-    components = myhome_models.Component.objects.filter(**cond).all()
+    components = models.Component.objects.filter(**cond).all()
     # for c in components:
     #     c.has_setup = 1
     #     try:
@@ -30,7 +29,7 @@ def component_list(request, filt='active'):
 
 
 def component_setup(request, id):
-    component = myhome_models.Component.objects.get(id=id)
+    component = models.Component.objects.get(id=id)
 
     try:
         module = importlib.import_module('components.{}'.format(component.name))
@@ -54,7 +53,7 @@ def component_setup(request, id):
 
 
 def device_list(request, component_id=None):
-    component = myhome_models.Component.objects.get(id=1)
+    component = models.Component.objects.get(id=1)
 
     try:
         module = importlib.import_module('components.{}'.format(component.name))
@@ -71,7 +70,7 @@ def device_list(request, component_id=None):
 
 
 def device_setup(request, id):
-    device = myhome_models.Device.objects.get(id=id)
+    device = models.Device.objects.get(id=id)
 
     try:
         module = importlib.import_module('components.{}'.format(device.component.name))
@@ -121,6 +120,19 @@ def zone_list(request):
 
 
 def zone_setup(request, id):
+    pass
+
+
+def automation_list(request):
+    automations = models.Automation.objects.all()
+
+    data = {
+        'automations': automations,
+    }
+    return render(request, 'automations.html', data)
+
+
+def automation_setup(request, id):
     pass
 
 
