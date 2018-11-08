@@ -61,7 +61,7 @@ def device_list(request, component_id=None):
     except ModuleNotFoundError:
         raise()
 
-    editable = true if hasattr(module, 'DeviceSetupForm') else False
+    editable = True if hasattr(module, 'DeviceSetupForm') else False
 
     data = {
         'devices': component.device_set.all(),

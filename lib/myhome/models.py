@@ -44,8 +44,10 @@ class Device(DataJsonMixin, models.Model):
     component = models.ForeignKey(Component, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
     human_name = models.CharField(max_length=100)
-    is_tracking = models.BooleanField(default=0)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     data_raw = models.TextField(db_column='data')
+    is_tracking = models.BooleanField(default=0)
 
     @property
     def data(self):

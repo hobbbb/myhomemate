@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 import asyncio
-import librouteros
 import logging
 
 import requests
@@ -46,18 +45,16 @@ async def aio_run():
 
     last_results = []
     for d in result['content']:
-        # print(d.keys())
-        # print(d['batteryLevel'])
         last_results.append({
             'name': d['name'],
             'human_name': d['name'],
+            'latitude': d['location']['latitude'] if d.get('location') else None,
+            'longitude': d['location']['longitude'] if d.get('location') else None,
             'data': {
-                # 'latitude': d['location']['latitude'],
-                # 'longitude': d['location']['longitude'],
-                'battery': d['batteryLevel']
-                # 'batteryStatus': d['batteryStatus'],
+                'battery': round(d['batteryLevel'] * 100),
+                'batteryStatus': d['batteryStatus'],
             },
         })
 
-    # update_devices(last_results)
+    update_devices(last_results)
     print(last_results)

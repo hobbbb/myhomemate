@@ -1,3 +1,5 @@
+
+import json
 import logging
 
 from myhome import models, utils
@@ -26,18 +28,26 @@ def get_component_config():
     return component.data
 
 
-def update_devices(new_devices):
+def update_devices(devices):
     component_name = utils.component_name()
     component = models.Component.objects.get(name=component_name)
-    device = {d.name: d for d in component.device_set.all()}
-    for k, v in new_devices.items():
-        if not device.get(k):
-            d = models.Device(
-                name=k,
-                human_name=v,
-                component=component
+    devs = {d.name: d for d in component.device_set.all()}
+    for d in devices:
+        if not d.get('name'):
+            continue
+
+        device = devs.get(d['name'])
+        if not device:
+            device = models.Device(
+                component=component,
+                name=d['name'],
+                human_name=d.get('human_name'),
             )
-            d.save()
+
+        device.data_raw = json.dumps(d.get('data'))
+        device.latitude = d.get('latitude')
+        device.longitude = d.get('longitude')
+        device.save()
 
 
 def get_device_config(name):
