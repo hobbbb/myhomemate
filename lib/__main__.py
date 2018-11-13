@@ -12,10 +12,16 @@ import uvloop
 from myhome import models
 
 
-def main():
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    loop = asyncio.get_event_loop()
+class HomeEngine:
+    def __init__(self):
+        self.loop = asyncio.get_event_loop()
 
+    async def async_run(self):
+        print('run')
+        await asyncio.sleep(1)
+
+
+async def aio_configuration(engine):
     qs = models.Component.objects.filter(is_active=True)
     for c in qs:
         try:
@@ -23,10 +29,19 @@ def main():
         except ModuleNotFoundError:
             raise()
 
-        loop.create_task(module.aio_run())
+        # loop.create_task(module.aio_run())
+    print('aio_configuration')
+    await asyncio.sleep(3)
 
-    loop.run_forever()
+
+async def setup_and_run():
+    engine = HomeEngine()
+
+    await aio_configuration(engine)
+
+    await engine.async_run()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    asyncio.run(setup_and_run())

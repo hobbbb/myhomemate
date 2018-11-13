@@ -1,11 +1,16 @@
 import asyncio
 
 
-async def coro():
+async def aio_scanning():
     while True:
-        print("scanning")
+        print("1 scanning")
         await asyncio.sleep(1)
-    return 1
+        return 1
+
+
+async def aio_once():
+    print("3 once")
+    await asyncio.sleep(3)
 
 
 async def coro2():
