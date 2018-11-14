@@ -12,14 +12,28 @@ import uvloop
 from myhome import models
 
 
-"""
 class HomeEngine:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
 
-    async def async_run(self):
+    async def aio_run(self):
         print('run')
         await asyncio.sleep(1)
+
+    def aio_add_job(self, tgt, *args):
+        if asyncio.iscoroutine(tgt):
+            print('1')
+        elif asyncio.iscoroutinefunction(tgt):
+            print('2')
+        else:
+            print('3')
+
+        # self.loop.call_soon(tgt, *args)
+        task = self.loop.run_in_executor(None, tgt, *args)
+
+        # task = self.loop.create_task(tgt)
+        # return task
+        return
 
 
 async def aio_configuration(engine):
@@ -30,9 +44,13 @@ async def aio_configuration(engine):
         except ModuleNotFoundError:
             raise()
 
-        # loop.create_task(module.aio_run())
+        scanner = module.component_setup(c.data)
+        # res = scanner.scan_devices()
+
+        await engine.aio_add_job(scanner.scan_devices)
+
     print('aio_configuration')
-    await asyncio.sleep(3)
+    # await asyncio.sleep(3)
 
 
 async def setup_and_run():
@@ -40,13 +58,19 @@ async def setup_and_run():
 
     await aio_configuration(engine)
 
-    await engine.async_run()
+    await engine.aio_run()
 
 
 if __name__ == "__main__":
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     asyncio.run(setup_and_run())
+
+
+
 """
+def aio_add_job(calb):
+    loop = asyncio.get_event_loop()
+    return loop.create_task(calb)
 
 
 def main():
@@ -61,24 +85,14 @@ def main():
         except ModuleNotFoundError:
             raise()
 
-        # sp = c.name.split('.')
-        # if len(sp) == 1:
-        #     component[sp[0]] = c.data
-        # elif len(sp) == 2:
-        #     component[sp[0]] = c.data
-        # else:
-        #     raise()
-
-
-        # component[sp[0]] =
-        # print(res)
-        # loop.create_task(module.aio_run())
         scanner = module.component_setup(c.data)
         res = scanner.scan_devices()
-        print(res)
 
-    # loop.run_forever()
+        await aio_add_job(res)
+
+    loop.run_forever()
 
 
 if __name__ == "__main__":
     main()
+"""
