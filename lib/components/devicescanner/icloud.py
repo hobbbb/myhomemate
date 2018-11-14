@@ -4,12 +4,14 @@ import asyncio
 import logging
 
 import requests
+import urllib3
 
 from django import forms
 from myhome.api import register_component, get_component_config, update_devices
 
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+urllib3.disable_warnings()
 
 
 def register():
@@ -20,43 +22,52 @@ def register():
 
 class ComponentSetupForm(forms.Form):
     user = forms.CharField(max_length=100)
-    password = forms.CharField(max_length=100, widget=forms.PasswordInput)
+    password = forms.CharField(max_length=100)  # , widget=forms.PasswordInput
+    interval = forms.IntegerField(initial=5)
 
 
-async def aio_run():
-    await asyncio.sleep(0)
+def component_setup(config):
+    return ICloudScanner(config)
 
-    config = get_component_config()
-    if not config:
-        return
 
-    url = 'https://{}:{}@fmipmobile.icloud.com/fmipservice/device/{}/initClient'.format(
-        config['user'], config['password'], config['user']
-    )
-    try:
-        http_resp = requests.post(url, timeout=2, allow_redirects=False, verify=False)
-    except requests.exceptions.RequestException as e:
-        _LOGGER.error(u'exception: "{}"'.format(e))
-        return
+class ICloudScanner():
+    def __init__(self, config):
+        for k, v in config.items():
+            setattr(self, k, v)
 
-    try:
-        result = http_resp.json()
-    except Exception as e:
-        _LOGGER.error(u'format error: "{}", result: "{}"'.format(e, http_resp.text))
-        return
+        self.scan_results = []
 
-    last_results = []
-    for d in result['content']:
-        last_results.append({
-            'name': d['name'],
-            'human_name': d['name'],
-            'latitude': d['location']['latitude'] if d.get('location') else None,
-            'longitude': d['location']['longitude'] if d.get('location') else None,
-            'data': {
-                'battery': round(d['batteryLevel'] * 100),
-                'batteryStatus': d['batteryStatus'],
-            },
-        })
+        # self._scan_devices()
 
-    update_devices(last_results)
-    print(last_results)
+    def _scan_devices(self):
+        url = 'https://{}:{}@fmipmobile.icloud.com/fmipservice/device/{}/initClient'.format(
+            self.user, self.password, self.user
+        )
+        try:
+            http_resp = requests.post(url, timeout=2, verify=False)
+        except requests.exceptions.RequestException as e:
+            logger.error(u'exception: "{}"'.format(e))
+            return
+
+        try:
+            result = http_resp.json()
+        except Exception as e:
+            logger.error(u'format error: "{}", result: "{}"'.format(e, http_resp.text))
+            return
+
+        self.scan_results = []
+        for d in result['content']:
+            self.scan_results.append({
+                'name': d['name'],
+                'human_name': d['name'],
+                'latitude': d['location']['latitude'] if d.get('location') else None,
+                'longitude': d['location']['longitude'] if d.get('location') else None,
+                'data': {
+                    'battery': round(d['batteryLevel'] * 100),
+                    'batteryStatus': d['batteryStatus'],
+                },
+            })
+
+    def scan_devices(self):
+        self._scan_devices()
+        return self.scan_results

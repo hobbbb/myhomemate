@@ -61,20 +61,23 @@ def main():
         except ModuleNotFoundError:
             raise()
 
-        sp = c.name.split('.')
-        if len(sp) == 1:
-            component[sp[0]] = c.data
-        elif len(sp) == 2:
-            component[sp[0]] = c.data
-        else:
-            raise()
+        # sp = c.name.split('.')
+        # if len(sp) == 1:
+        #     component[sp[0]] = c.data
+        # elif len(sp) == 2:
+        #     component[sp[0]] = c.data
+        # else:
+        #     raise()
 
 
-        component[sp[0]] =
-        print(res)
+        # component[sp[0]] =
+        # print(res)
         # loop.create_task(module.aio_run())
+        scanner = module.component_setup(c.data)
+        res = scanner.scan_devices()
+        print(res)
 
-    loop.run_forever()
+    # loop.run_forever()
 
 
 if __name__ == "__main__":
