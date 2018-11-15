@@ -39,7 +39,7 @@ def component_setup(request, id):
     if request.method == 'POST':
         form = module.ComponentSetupForm(request.POST)
         if form.is_valid():
-            component.data_raw = json.dumps(form.cleaned_data)
+            component.data = form.cleaned_data
             component.save()
             return HttpResponseRedirect(reverse('act_components'))
     else:
@@ -80,7 +80,7 @@ def device_setup(request, id):
     if request.method == 'POST':
         form = module.DeviceSetupForm(request.POST)
         # if form.is_valid():
-        #     component.data_raw = json.dumps(form.cleaned_data)
+        #     component.data = json.dumps(form.cleaned_data)
         #     component.save()
         #     return HttpResponseRedirect(reverse('act_components'))
     else:

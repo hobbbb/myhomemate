@@ -45,9 +45,9 @@ async def aio_configuration(engine):
             raise()
 
         scanner = module.component_setup(c.data)
-        # res = scanner.scan_devices()
 
-        await engine.aio_add_job(scanner.scan_devices)
+        # await engine.aio_add_job(scanner.scan_devices)
+        engine.loop.create_task(scanner.aio_scan_devices())
 
     print('aio_configuration')
     # await asyncio.sleep(3)

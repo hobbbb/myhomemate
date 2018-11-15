@@ -7,7 +7,7 @@ import requests
 import urllib3
 
 from django import forms
-from myhome.api import register_component, get_component_config, update_devices
+from myhome.api import register_component  # , get_component_config, update_devices
 
 
 logger = logging.getLogger(__name__)
@@ -69,5 +69,10 @@ class ICloudScanner():
             })
 
     def scan_devices(self):
+        self._scan_devices()
+        return self.scan_results
+
+    async def aio_scan_devices(self):
+        await asyncio.sleep(self.interval)
         self._scan_devices()
         return self.scan_results

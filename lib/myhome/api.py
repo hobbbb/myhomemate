@@ -14,6 +14,7 @@ def register_component(config):
         component = models.Component(
             name=component_name,
             human_name=config.get('human_name'),
+            data={}
         )
     component.save()
     return component
@@ -44,7 +45,7 @@ def update_devices(devices):
                 human_name=d.get('human_name'),
             )
 
-        device.data_raw = json.dumps(d.get('data'))
+        device.data = json.dumps(d.get('data'))
         device.latitude = d.get('latitude')
         device.longitude = d.get('longitude')
         device.save()
