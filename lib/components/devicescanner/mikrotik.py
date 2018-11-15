@@ -25,12 +25,12 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-def component_setup(config):
+def get_scanner(config):
     scanner = MikrotikScanner(config)
     return scanner if scanner.scan_init else None
 
 
-class MikrotikScanner():
+class MikrotikScanner:
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)

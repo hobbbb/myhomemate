@@ -26,11 +26,11 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-def component_setup(config):
+def get_scanner(config):
     return ICloudScanner(config)
 
 
-class ICloudScanner():
+class ICloudScanner:
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)
