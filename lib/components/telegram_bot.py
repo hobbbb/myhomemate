@@ -1,15 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-import asyncio
 import logging
-
-from telegram import Bot
-from telegram.ext import Updater, MessageHandler, Filters
-from telegram.utils.request import Request
 
 from django import forms
 
-from myhome.api import register_component, get_component_config
+from myhome.api import register_component
+
+
+REQUIREMENTS = ['python-telegram-bot==11.1.0', 'PySocks==1.6.8']
 
 
 logger = logging.getLogger(__name__)
@@ -73,6 +71,10 @@ def send_message(mess):
 
 class TelegramBot:
     def __init__(self, config):
+        from telegram import Bot
+        from telegram.utils.request import Request
+        from telegram.ext import Updater, MessageHandler, Filters
+
         if config.get('proxy_url'):
             proxy_params = {'username': config.get('proxy_user'), 'password': config.get('proxy_password')}
             request = Request(con_pool_size=8, proxy_url=config['proxy_url'], urllib3_proxy_kwargs=proxy_params)

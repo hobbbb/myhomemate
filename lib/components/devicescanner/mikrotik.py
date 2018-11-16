@@ -1,11 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-import asyncio
-import librouteros
 import logging
 
 from django import forms
-from myhome.api import register_component, get_component_config, update_devices
+
+from myhome.api import register_component
+
+
+REQUIREMENTS = ['librouteros==2.1.1']
 
 
 logger = logging.getLogger(__name__)
@@ -45,6 +47,8 @@ class MikrotikScanner:
             logger.error('Connection to Mikrotik failed')
 
     def connect_to_device(self):
+        import librouteros
+
         try:
             self.client = librouteros.connect(
                 self.host,
