@@ -22,41 +22,33 @@ class HomeEngine:
         self.eventbus = EventBus()
 
     async def aio_run(self):
-        self.eventbus.throw(const.EVENT_START_ENGINE)
+        # self.eventbus.throw(const.EVENT_START_ENGINE)
 
         print('run')
         await asyncio.sleep(1)
 
-    # def aio_add_job(self, tgt, *args):
-    #     if asyncio.iscoroutine(tgt):
-    #         print('1')
-    #     elif asyncio.iscoroutinefunction(tgt):
-    #         print('2')
-    #     else:
-    #         print('3')
-
-    #     # self.loop.call_soon(tgt, *args)
-    #     # task = self.loop.run_in_executor(None, tgt, *args)
-
-    #     # task = self.loop.create_task(tgt)
-    #     # return task
-    #     return
+    def aio_add_task(self, tgt, *args):
+        task = self.loop.create_task(tgt)
+        return task
 
 
 async def aio_configuration(engine):
+    tasks = []
+
     qs = models.Component.objects.filter(is_active=True)
-    for c in qs:
+    for row in qs:
+        sp = row.name.split('.')
+
         try:
-            module = importlib.import_module('components.{}'.format(c.name))
+            module = importlib.import_module('components.{}'.format(sp[0]))
         except ModuleNotFoundError:
             raise()
 
-        if hasattr(module, 'get_scanner'):
-            scanner = module.get_scanner(c.data)
-        elif hasattr(module, 'init_component'):
-            module.init_component(engine, c.data)
+        component_config = (sp[1], row.data) if len(sp) > 1 else row.data
+        tasks.append(module.aio_initiate(engine, component_config))
 
-        print(engine.eventbus.__dict__)
+    await asyncio.wait(tasks)
+        # print(engine.eventbus.__dict__)
         # await engine.aio_add_job(scanner.scan_devices)
         # engine.loop.create_task(scanner.aio_scan_devices())
 
@@ -69,41 +61,9 @@ async def setup_and_run():
 
     await aio_configuration(engine)
 
-    await engine.aio_run()
+    return await engine.aio_run()
 
 
 if __name__ == "__main__":
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     asyncio.run(setup_and_run())
-
-
-
-"""
-def aio_add_job(calb):
-    loop = asyncio.get_event_loop()
-    return loop.create_task(calb)
-
-
-def main():
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    loop = asyncio.get_event_loop()
-
-    component = {}
-    qs = models.Component.objects.filter(is_active=True)
-    for c in qs:
-        try:
-            module = importlib.import_module('components.{}'.format(c.name))
-        except ModuleNotFoundError:
-            raise()
-
-        scanner = module.component_setup(c.data)
-        res = scanner.scan_devices()
-
-        await aio_add_job(res)
-
-    loop.run_forever()
-
-
-if __name__ == "__main__":
-    main()
-"""

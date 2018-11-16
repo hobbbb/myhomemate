@@ -7,7 +7,7 @@ from django import forms
 from myhome.api import register_component
 
 
-REQUIREMENTS = ['astral==1.7.1']
+REQUIREMENTS = ['astral']
 
 
 logger = logging.getLogger(__name__)

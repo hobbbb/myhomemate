@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import asyncio
 import logging
 
 from django import forms
@@ -8,7 +9,7 @@ from core import const
 from myhome.api import register_component
 
 
-REQUIREMENTS = ['python-telegram-bot==11.1.0', 'PySocks==1.6.8']
+REQUIREMENTS = ['python-telegram-bot', 'PySocks']
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,10 @@ class ComponentSetupForm(forms.Form):
     proxy_password = forms.CharField(max_length=100, required=False, widget=forms.PasswordInput)
 
 
-def init_component(engine, config):
+async def aio_initiate(engine, config):
+    await asyncio.sleep(1)
+    print('telegram')
+
     db = [
         {
             'name': 'ip',

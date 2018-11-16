@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import asyncio
 import logging
 
 from django import forms
@@ -7,7 +8,7 @@ from django import forms
 from myhome.api import register_component
 
 
-REQUIREMENTS = ['librouteros==2.1.1']
+REQUIREMENTS = ['librouteros']
 
 
 logger = logging.getLogger(__name__)
@@ -27,22 +28,25 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-def get_scanner(config):
-    scanner = MikrotikScanner(config)
-    return scanner if scanner.scan_init else None
+async def aio_get_explorer(config):
+    await asyncio.sleep(1)
+    print('Mikrotik')
+
+    explorer = MikrotikExplorer(config)
+    return explorer if explorer.exploring_init else None
 
 
-class MikrotikScanner:
+class MikrotikExplorer(Explorer):
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)
 
-        self.scan_results = []
-        self.scan_init = self.connect_to_device()
+        self.exploring_results = []
+        self.exploring_init = self.connect_to_device()
 
-        if self.scan_init:
+        if self.exploring_init:
             logger.info('Start polling Mikrotik router...')
-            # self._scan_devices()
+            # self._exploring_devices()
         else:
             logger.error('Connection to Mikrotik failed')
 
@@ -89,7 +93,7 @@ class MikrotikScanner:
 
         return True
 
-    def _scan_devices(self):
+    def _exploring_devices(self):
         if self.capsman_exist:
             devices_tracker = 'capsman'
         elif self.wireless_exist:
@@ -112,11 +116,11 @@ class MikrotikScanner:
 
         macs = {device.get('mac-address'): device for device in device_names if device.get('mac-address')}
 
-        self.scan_results = []
+        self.exploring_results = []
         if self.wireless_exist or self.capsman_exist:
             for device in devices:
                 mac = macs.get(device.get('mac-address'))
-                self.scan_results.append({
+                self.exploring_results.append({
                     'name': mac['mac-address'],
                     'human_name': mac['host-name'],
                 })
@@ -125,16 +129,16 @@ class MikrotikScanner:
                 if not device.get('active-address'):
                     continue
                 mac = macs.get(device.get('mac-address'))
-                self.scan_results.append({
+                self.exploring_results.append({
                     'name': mac['mac-address'],
                     'human_name': mac['host-name'],
                 })
 
         return True
 
-    def scan_devices(self):
-        self._scan_devices()
-        return self.scan_results
+    def exploring_devices(self):
+        self._exploring_devices()
+        return self.exploring_results
 
 # async def aio_run():
 #     await asyncio.sleep(0)
@@ -143,12 +147,12 @@ class MikrotikScanner:
 #     if not config:
 #         return
 
-#     s = MikrotikScanner(dict(
+#     s = MikrotikExplorer(dict(
 #         host=config['host'],
 #         port=config['port'],
 #         username=config['user'],
 #         password=config['password'],
 #     ))
 
-#     # update_devices(s.scan_results)
-#     print(s.scan_results)
+#     # update_devices(s.exploring_results)
+#     print(s.exploring_results)

@@ -42,6 +42,17 @@ def setup():
         for r in module.REQUIREMENTS:
             requirements.add(r)
 
+    for r in [
+        'asyncio',
+        'uvloop',
+        'requests',
+        'django-bootstrap4',
+        'jsonfield',
+        'Django==2.1.2',
+        'mysqlclient==1.3.13'
+    ]:
+        requirements.add(r)
+
     subprocess.call(["pip", "install"] + list(requirements))
 
 

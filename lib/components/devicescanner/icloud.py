@@ -25,20 +25,23 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-def get_scanner(config):
-    return ICloudScanner(config)
+async def aio_get_explorer(config):
+    await asyncio.sleep(3)
+    print('ICloudExplorer')
+
+    return ICloudExplorer(config)
 
 
-class ICloudScanner:
+class ICloudExplorer(Explorer):
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)
 
-        self.scan_results = []
+        self.exploring_results = []
 
-        # self._scan_devices()
+        # self._exploring_devices()
 
-    def _scan_devices(self):
+    def _exploring_devices(self):
         url = 'https://{}:{}@fmipmobile.icloud.com/fmipservice/device/{}/initClient'.format(
             self.user, self.password, self.user
         )
@@ -54,9 +57,9 @@ class ICloudScanner:
             logger.error(u'format error: "{}", result: "{}"'.format(e, http_resp.text))
             return
 
-        self.scan_results = []
+        self.exploring_results = []
         for d in result['content']:
-            self.scan_results.append({
+            self.exploring_results.append({
                 'name': d['name'],
                 'human_name': d['name'],
                 'latitude': d['location']['latitude'] if d.get('location') else None,
@@ -67,11 +70,11 @@ class ICloudScanner:
                 },
             })
 
-    def scan_devices(self):
-        self._scan_devices()
-        return self.scan_results
+    def exploring_devices(self):
+        self._exploring_devices()
+        return self.exploring_results
 
-    async def aio_scan_devices(self):
+    async def aio_exploring_devices(self):
         await asyncio.sleep(self.interval)
-        self._scan_devices()
-        return self.scan_results
+        self._exploring_devices()
+        return self.exploring_results
