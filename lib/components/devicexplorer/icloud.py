@@ -6,6 +6,8 @@ import requests
 import urllib3
 
 from django import forms
+
+from . import BaseExplorer
 from myhome.api import register_component  # , get_component_config, update_devices
 
 
@@ -25,14 +27,11 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-async def aio_get_explorer(config):
-    await asyncio.sleep(3)
-    print('ICloudExplorer')
-
+def get_explorer(config):
     return ICloudExplorer(config)
 
 
-class ICloudExplorer(Explorer):
+class ICloudExplorer(BaseExplorer):
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)

@@ -5,6 +5,7 @@ import logging
 
 from django import forms
 
+from . import BaseExplorer
 from myhome.api import register_component
 
 
@@ -28,15 +29,12 @@ class ComponentSetupForm(forms.Form):
     interval = forms.IntegerField(initial=5)
 
 
-async def aio_get_explorer(config):
-    await asyncio.sleep(1)
-    print('Mikrotik')
-
+def get_explorer(config):
     explorer = MikrotikExplorer(config)
     return explorer if explorer.exploring_init else None
 
 
-class MikrotikExplorer(Explorer):
+class MikrotikExplorer(BaseExplorer):
     def __init__(self, config):
         for k, v in config.items():
             setattr(self, k, v)
