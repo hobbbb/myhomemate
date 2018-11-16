@@ -11,38 +11,9 @@ import uvloop
 from collections import defaultdict
 from functools import wraps
 
+from core import const
+from core.eventbus import EventBus
 from myhome import models
-
-
-class EventBus:
-    # __slots__ = '_events'
-
-    def __init__(self):
-        self._events = defaultdict(set)
-
-    def listen(self, event):
-        def outer(func):
-            self._add_event(event, func)
-
-            @wraps(func)
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs)
-
-            return wrapper
-
-        return outer
-
-    def throw(self, event):
-        for func in self._event_funcs(event):
-            # func(*args, **kwargs)
-            func()
-
-    def _event_funcs(self, event):
-        for func in self._events[event]:
-            yield func
-
-    def _add_event(self, event, func):
-        self._events[event].add(func)
 
 
 class HomeEngine:
@@ -51,7 +22,7 @@ class HomeEngine:
         self.eventbus = EventBus()
 
     async def aio_run(self):
-        self.eventbus.throw('start_engine')
+        self.eventbus.throw(const.EVENT_START_ENGINE)
 
         print('run')
         await asyncio.sleep(1)

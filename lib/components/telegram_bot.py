@@ -4,6 +4,7 @@ import logging
 
 from django import forms
 
+from core import const
 from myhome.api import register_component
 
 
@@ -52,7 +53,7 @@ def init_component(engine, config):
 
     bot = TelegramBot(config)
 
-    @engine.eventbus.listen('start_engine')
+    @engine.eventbus.listen(const.EVENT_START_ENGINE)
     def _start_polling():
         bot.start_polling()
 
