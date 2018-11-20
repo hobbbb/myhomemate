@@ -119,8 +119,8 @@ class MikrotikExplorer(BaseExplorer):
             for device in devices:
                 mac = macs.get(device.get('mac-address'))
                 self.exploring_results.append({
-                    'name': mac['mac-address'],
-                    'human_name': mac['host-name'],
+                    'device_id': mac['mac-address'],
+                    'name': mac['host-name'],
                 })
         else:
             for device in device_names:
@@ -128,8 +128,8 @@ class MikrotikExplorer(BaseExplorer):
                     continue
                 mac = macs.get(device.get('mac-address'))
                 self.exploring_results.append({
-                    'name': mac['mac-address'],
-                    'human_name': mac['host-name'],
+                    'device_id': mac['mac-address'],
+                    'name': mac['host-name'],
                 })
 
         return True

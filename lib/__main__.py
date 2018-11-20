@@ -22,7 +22,7 @@ class HomeEngine:
         self.eventbus = EventBus()
 
     async def aio_run(self):
-        # self.eventbus.throw(const.EVENT_START_ENGINE)
+        self.eventbus.throw(const.EVENT_START_ENGINE)
 
         print('run')
         await asyncio.sleep(1)

@@ -1,6 +1,7 @@
 import asyncio
 import importlib
 
+
 async def aio_initiate(engine, data):
     explorer, cfg = data
 
@@ -17,13 +18,18 @@ async def aio_initiate(engine, data):
     devices = explorer.exploring_devices()
     for d in devices:
         device = Device(**d)
+        print(device.__dict__)
 
     return 1
 
 
 class Device:
     def __init__(self, *args, **kwargs):
-        print(kwargs)
+        self.device_id = kwargs.get('device_id')
+        self.name = kwargs.get('name')
+        self.attrs = kwargs.get('data')
+        self.battery = kwargs.get('battery')
+
 
 class BaseExplorer:
     def exploring_devices(self):
