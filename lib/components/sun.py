@@ -27,6 +27,6 @@ class ComponentSetupForm(forms.Form):
 
 
 def init_component(engine, config):
-    import astral
+    # import astral
 
     return True

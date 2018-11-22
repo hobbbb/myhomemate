@@ -35,9 +35,11 @@ class ComponentSetupForm(forms.Form):
     proxy_password = forms.CharField(max_length=100, required=False, widget=forms.PasswordInput)
 
 
-async def aio_initiate(engine, config):
+async def aio_initiate(engine, component):
     await asyncio.sleep(1)
     print('telegram')
+
+    config = component.data
 
     db = [
         {

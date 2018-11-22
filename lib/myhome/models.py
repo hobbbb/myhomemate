@@ -1,5 +1,4 @@
 
-import json
 from jsonfield import JSONField
 
 from django.contrib.auth.models import User
@@ -18,8 +17,8 @@ class Zone(models.Model):
 
 
 class Component(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    human_name = models.CharField(max_length=100)
+    uniq_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=0)
     data = JSONField()
 
@@ -30,8 +29,8 @@ class Component(models.Model):
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     component = models.ForeignKey(Component, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, unique=True)
-    human_name = models.CharField(max_length=100)
+    uniq_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     data = JSONField()
@@ -49,21 +48,21 @@ class Service(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
 
-class AutomationTrigger(models.Model):
-    entity = models.ForeignKey(Entity, on_delete=models.CASCADE, null=True)
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True)
+# class AutomationTrigger(models.Model):
+#     entity = models.ForeignKey(Entity, on_delete=models.CASCADE, null=True)
+#     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True)
 
 
 # class AutomationCondition(models.Model):
 #     pass
 
 
-class AutomationAction(models.Model):
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
+# class AutomationAction(models.Model):
+#     service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
 
 
-class Automation(models.Model):
-    name = models.CharField(max_length=100)
-    trigger = models.ForeignKey(AutomationTrigger, on_delete=models.CASCADE)
-    # condition = models.ForeignKey(AutomationCondition, on_delete=models.CASCADE, null=True)
-    action = models.ForeignKey(AutomationAction, on_delete=models.CASCADE)
+# class Automation(models.Model):
+#     name = models.CharField(max_length=100)
+#     trigger = models.ForeignKey(AutomationTrigger, on_delete=models.CASCADE)
+#     # condition = models.ForeignKey(AutomationCondition, on_delete=models.CASCADE, null=True)
+#     action = models.ForeignKey(AutomationAction, on_delete=models.CASCADE)

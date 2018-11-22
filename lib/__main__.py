@@ -22,9 +22,9 @@ class HomeEngine:
         self.eventbus = EventBus()
 
     async def aio_run(self):
-        self.eventbus.throw(const.EVENT_START_ENGINE)
-
         print('run')
+
+        self.eventbus.throw(const.EVENT_START_ENGINE)
         await asyncio.sleep(1)
 
     def aio_add_task(self, tgt, *args):
@@ -33,6 +33,8 @@ class HomeEngine:
 
 
 async def aio_configuration(engine):
+    print('aio_configuration')
+
     tasks = []
 
     qs = models.Component.objects.filter(is_active=True)
@@ -44,15 +46,14 @@ async def aio_configuration(engine):
         except ModuleNotFoundError:
             raise()
 
-        component_config = (sp[1], row.data) if len(sp) > 1 else row.data
-        tasks.append(module.aio_initiate(engine, component_config))
+        # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
+        tasks.append(module.aio_initiate(engine, row))
 
     await asyncio.wait(tasks)
         # print(engine.eventbus.__dict__)
         # await engine.aio_add_job(scanner.scan_devices)
         # engine.loop.create_task(scanner.aio_scan_devices())
 
-    print('aio_configuration')
     # await asyncio.sleep(3)
 
 

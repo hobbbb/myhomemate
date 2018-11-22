@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import asyncio
 import logging
 
 from django import forms
