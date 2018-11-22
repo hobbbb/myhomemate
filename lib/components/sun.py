@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def register():
     register_component({
-        'human_name': 'Солнце',
+        'name': 'Солнце',
     })
 
 

@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def register():
     register_component({
-        'human_name': 'Mikrotik',
+        'name': 'Mikrotik',
     })
 
 

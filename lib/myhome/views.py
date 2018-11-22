@@ -1,5 +1,4 @@
 import importlib
-import json
 
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
@@ -32,7 +31,7 @@ def component_setup(request, id):
     component = models.Component.objects.get(id=id)
 
     try:
-        module = importlib.import_module('components.{}'.format(component.name))
+        module = importlib.import_module('components.{}'.format(component.uniq_id))
     except ModuleNotFoundError:
         raise()
 

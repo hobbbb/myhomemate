@@ -6,14 +6,14 @@ from myhome import models, utils
 
 
 def register_component(config):
-    component_name = utils.component_name()
-    component = models.Component.objects.filter(name=component_name).first()
+    component_id = utils.component_name()
+    component = models.Component.objects.filter(uniq_id=component_id).first()
     if component:
-        component.human_name = config.get('human_name')
+        component.human_name = config.get('name')
     else:
         component = models.Component(
-            name=component_name,
-            human_name=config.get('human_name'),
+            uniq_id=component_id,
+            name=config.get('name'),
             data={}
         )
     component.save()
@@ -21,8 +21,8 @@ def register_component(config):
 
 
 def get_component_config():
-    component_name = utils.component_name()
-    component = models.Component.objects.get(name=component_name)
+    component_id = utils.component_name()
+    component = models.Component.objects.get(uniq_id=component_id)
     if not component.data:
         logging.error('{}: component configuration is not set'.format(component.name))
         return
@@ -49,6 +49,14 @@ def update_devices(devices):
         device.latitude = d.get('latitude')
         device.longitude = d.get('longitude')
         device.save()
+
+
+def update_device(edev):
+    device = models.Device.objects.filter(component=edev.component, uniq_id=edev.uniq_id).first()
+    if device:
+        print('device in db')
+    else:
+        print('no device in db')
 
 
 def get_device_config(name):

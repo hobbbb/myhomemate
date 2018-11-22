@@ -17,7 +17,7 @@ urllib3.disable_warnings()
 
 def register():
     register_component({
-        'human_name': 'iCloud devices',
+        'name': 'iCloud devices',
     })
 
 

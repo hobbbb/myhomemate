@@ -39,7 +39,7 @@ async def aio_configuration(engine):
 
     qs = models.Component.objects.filter(is_active=True)
     for row in qs:
-        sp = row.name.split('.')
+        sp = row.uniq_id.split('.')
 
         try:
             module = importlib.import_module('components.{}'.format(sp[0]))
