@@ -1,14 +1,12 @@
 import asyncio
 import importlib
+import time
 
-from myhome.api import update_device
+from myhome import models
 
 
 async def aio_initiate(engine, component):
-    try:
-        module = importlib.import_module(f'components.{component.uniq_id}')
-    except ModuleNotFoundError:
-        raise()
+    module = importlib.import_module(f'components.{component.uniq_id}')
 
     cfg = component.data
 
@@ -22,6 +20,7 @@ async def aio_initiate(engine, component):
 
     interval = cfg.get('interval', 10)
     while True:
+        print(f'{component.uniq_id}...')
         await asyncio.sleep(interval)
 
         devices = explorer.exploring_devices()
@@ -40,9 +39,8 @@ class EDeviceSet:
     def handle(self, edevice):
         print(edevice.__dict__)
         if edevice.uniq_id in self.devices.keys():
-            print('stored')
+            pass
         else:
-            print('new')
             edevice.save()
             self.devices[edevice.uniq_id] = edevice
 
@@ -54,9 +52,32 @@ class EDevice:
         self.name = kwargs.get('name')
         self.attrs = kwargs.get('data')
         self.battery = kwargs.get('battery')
+        self.longitude = kwargs.get('longitude')
+        self.latitude = kwargs.get('latitude')
+        self.last_saved = None
 
     def save(self):
-        update_device(self)
+        now = time.time()
+        if not self.last_saved or self.last_saved < now - 5 * 60:
+            self.last_saved = now
+            device = models.Device.objects.filter(component=self.component, uniq_id=self.uniq_id).first()
+            if device:
+                device.battery = self.battery
+                device.longitude = self.longitude
+                device.latitude = self.latitude
+                device.data = self.data
+            else:
+                device = models.Device(
+                    is_tracking=True,
+                    component=self.component,
+                    uniq_id=self.uniq_id,
+                    name=self.name,
+                    battery=self.battery,
+                    longitude=self.longitude,
+                    latitude=self.latitude,
+                    data=self.attrs,
+                )
+            device.save()
 
 
 class BaseExplorer:

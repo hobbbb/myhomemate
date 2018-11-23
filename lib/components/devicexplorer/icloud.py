@@ -62,9 +62,9 @@ class ICloudExplorer(BaseExplorer):
                 'device_id': d['name'],
                 'name': d['name'],
                 'battery': round(d.get('batteryLevel', 0) * 100) if d.get('batteryStatus', '') != 'Unknown' else None,
+                'latitude': d['location']['latitude'] if d.get('location') else None,
+                'longitude': d['location']['longitude'] if d.get('location') else None,
                 'data': {
-                    'latitude': d['location']['latitude'] if d.get('location') else None,
-                    'longitude': d['location']['longitude'] if d.get('location') else None,
                     'batteryStatus': d.get('batteryStatus'),
                 },
             })

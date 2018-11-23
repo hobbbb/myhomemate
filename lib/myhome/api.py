@@ -14,7 +14,6 @@ def register_component(config):
         component = models.Component(
             uniq_id=component_id,
             name=config.get('name'),
-            data={}
         )
     component.save()
     return component
@@ -49,16 +48,3 @@ def update_devices(devices):
         device.latitude = d.get('latitude')
         device.longitude = d.get('longitude')
         device.save()
-
-
-def update_device(edev):
-    device = models.Device.objects.filter(component=edev.component, uniq_id=edev.uniq_id).first()
-    if device:
-        print('device in db')
-    else:
-        print('no device in db')
-
-
-def get_device_config(name):
-    device = models.Device.objects.get(name=name)
-    return device.data

@@ -33,6 +33,7 @@ class Device(models.Model):
     name = models.CharField(max_length=100)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    battery = models.PositiveSmallIntegerField(null=True)
     data = JSONField()
     is_tracking = models.BooleanField(default=0)
 
