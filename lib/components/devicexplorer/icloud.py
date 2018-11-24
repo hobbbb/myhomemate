@@ -59,7 +59,7 @@ class ICloudExplorer(BaseExplorer):
         self.exploring_results = []
         for d in result['content']:
             self.exploring_results.append({
-                'device_id': d['name'],
+                'uniq_id': d['name'],
                 'name': d['name'],
                 'battery': round(d.get('batteryLevel', 0) * 100) if d.get('batteryStatus', '') != 'Unknown' else None,
                 'latitude': d['location']['latitude'] if d.get('location') else None,
