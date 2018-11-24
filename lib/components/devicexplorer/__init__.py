@@ -26,8 +26,7 @@ async def aio_initiate(engine, component):
         devices = explorer.exploring_devices()
         for d in devices:
             d['component'] = component
-            device = Device(**d)
-            deviceset.handle(device)
+            deviceset.handle(d)
 
     return 1
 
@@ -36,14 +35,19 @@ class DeviceSet:
     def __init__(self, devices):
         self.devices = {d.uniq_id: d for d in devices}
 
-    def handle(self, device):
+    def handle(self, data):
+        device = self.devices.get(data['uniq_id'])
+        if device:
+            device = device.refresh(**data)
+        else:
+            device = Device(**data)
+
         now = time.time()
         if not device.last_saved or device.last_saved < now - 5 * 60:
             device.last_saved = now
             device.save()
 
-        if device.uniq_id not in self.devices.keys():
-            self.devices[device.uniq_id] = device
+        self.devices[device.uniq_id] = device
 
 
 class BaseExplorer:

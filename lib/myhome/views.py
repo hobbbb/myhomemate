@@ -1,6 +1,7 @@
 import importlib
 
 from django.contrib.auth.models import User
+# from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -9,6 +10,7 @@ from myhome import forms, models
 
 
 def main(request):
+    # cache.get('devices')
     devices = models.Device.objects.all()
     data = {
         'devices': devices,
