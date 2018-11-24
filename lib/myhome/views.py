@@ -5,7 +5,15 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from myhome import models
+from myhome import forms, models
+
+
+def main(request):
+    devices = models.Device.objects.all()
+    data = {
+        'devices': devices,
+    }
+    return render(request, 'main.html', data)
 
 
 def component_list(request, filt='active'):
@@ -27,13 +35,9 @@ def component_list(request, filt='active'):
     return render(request, 'components.html', data)
 
 
-def component_setup(request, id):
+def component_edit(request, id):
     component = models.Component.objects.get(id=id)
-
-    try:
-        module = importlib.import_module('components.{}'.format(component.uniq_id))
-    except ModuleNotFoundError:
-        raise()
+    module = importlib.import_module('components.{}'.format(component.uniq_id))
 
     if request.method == 'POST':
         form = module.ComponentSetupForm(request.POST)
@@ -48,16 +52,12 @@ def component_setup(request, id):
         'component': component,
         'form': form,
     }
-    return render(request, 'component.html', data)
+    return render(request, 'component_edit.html', data)
 
 
 def device_list(request, component_id=None):
     component = models.Component.objects.get(id=1)
-
-    try:
-        module = importlib.import_module('components.{}'.format(component.name))
-    except ModuleNotFoundError:
-        raise()
+    module = importlib.import_module('components.{}'.format(component.name))
 
     editable = True if hasattr(module, 'DeviceSetupForm') else False
 
@@ -68,13 +68,9 @@ def device_list(request, component_id=None):
     return render(request, 'devices.html', data)
 
 
-def device_setup(request, id):
+def device_edit(request, id):
     device = models.Device.objects.get(id=id)
-
-    try:
-        module = importlib.import_module('components.{}'.format(device.component.name))
-    except ModuleNotFoundError:
-        raise()
+    module = importlib.import_module('components.{}'.format(device.component.name))
 
     if request.method == 'POST':
         form = module.DeviceSetupForm(request.POST)
@@ -89,7 +85,7 @@ def device_setup(request, id):
         'device': device,
         'form': form,
     }
-    return render(request, 'device.html', data)
+    return render(request, 'device_edit.html', data)
 
 
 def person_list(request):
@@ -100,7 +96,7 @@ def person_list(request):
     return render(request, 'persons.html', data)
 
 
-def person_setup(request, id):
+def person_edit(request, id):
     pass
 
 
@@ -109,17 +105,41 @@ def room_list(request):
     return render(request, 'rooms.html', data)
 
 
-def room_setup(request, id):
+def room_edit(request, id):
     pass
 
 
 def zone_list(request):
-    data = {}
+    zones = models.Zone.objects.all()
+    data = {
+        'zones': zones,
+    }
     return render(request, 'zones.html', data)
 
 
-def zone_setup(request, id):
-    pass
+def zone_edit(request, id=None):
+    if id:
+        zone = models.Zone.objects.get(pk=id)
+        if request.method == 'POST':
+            form = forms.ZoneForm(request.POST, instance=zone)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('zone_list'))
+        else:
+            form = forms.ZoneForm(instance=zone)
+    else:
+        if request.method == 'POST':
+            form = forms.ZoneForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('zone_list'))
+        else:
+            form = forms.ZoneForm()
+
+    data = {
+        'form': form
+    }
+    return render(request, 'zone_edit.html', data)
 
 
 def automation_list(request):
@@ -131,7 +151,7 @@ def automation_list(request):
     return render(request, 'automations.html', data)
 
 
-def automation_setup(request, id):
+def automation_edit(request, id):
     pass
 
 
