@@ -4,6 +4,7 @@ import django
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
 django.setup()
+from django.core.cache import cache
 
 import asyncio
 import importlib
@@ -35,16 +36,15 @@ class HomeEngine:
 async def aio_configuration(engine):
     print('aio_configuration')
 
+    zones = {z.id: z for z in models.Zone.objects.all()}
+    cache.set('zones', zones, None)
+
     tasks = []
 
     qs = models.Component.objects.filter(is_active=True)
     for row in qs:
         sp = row.uniq_id.split('.')
-
-        try:
-            module = importlib.import_module('components.{}'.format(sp[0]))
-        except ModuleNotFoundError:
-            raise()
+        module = importlib.import_module('components.{}'.format(sp[0]))
 
         # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
         tasks.append(module.aio_initiate(engine, row))

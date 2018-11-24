@@ -49,7 +49,8 @@ def setup():
         'django-bootstrap4',
         'jsonfield',
         'Django==2.1.2',
-        'mysqlclient==1.3.13'
+        'mysqlclient==1.3.13',
+        'python3-memcached',
     ]:
         requirements.add(r)
 

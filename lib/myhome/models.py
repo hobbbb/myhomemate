@@ -1,7 +1,9 @@
+import math
 import time
 from jsonfield import JSONField
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.db import models
 
 
@@ -35,6 +37,12 @@ class Device(models.Model):
     def refresh(self, **kwargs):
         for k in ['latitude', 'longitude', 'battery']:
             setattr(self, k, kwargs.get(k))
+
+        print(self.__dict__)
+        if self.latitude and self.longitude:
+            t = Zone.verification(self.latitude, self.longitude)
+            print(t)
+
         return self
 
 
@@ -43,6 +51,26 @@ class Zone(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     radius = models.PositiveSmallIntegerField()
+
+    @staticmethod
+    def verification(latitude, longitude):
+        print(latitude, longitude)
+        zones = cache.get('zones')
+        for k, v in zones.items():
+            dist = v.radius / 1000
+            mylat = v.latitude
+            mylon = v.longitude
+            lon1 = mylon - dist / abs(math.cos(math.radians(mylat)) * 111.) # 1 градус широты = 111 км
+            lon2 = mylon + dist / abs(math.cos(math.radians(mylat)) * 111.)
+            lat1 = mylat - (dist / 111.)
+            lat2 = mylat + (dist / 111.)
+
+            if lat1 > latitude and latitude < lat2 and lon1 > longitude and longitude < lon2:
+                print('True')
+                return True
+            else:
+                print('False')
+                return False
 
 
 class Entity(models.Model):
