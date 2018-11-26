@@ -38,9 +38,11 @@ class Device(models.Model):
             setattr(self, k, kwargs.get(k))
 
         # print(self.__dict__)
-        if self.latitude and self.longitude:
-            t = Zone.verification(self.latitude, self.longitude)
-            # print(t)
+        zones = cache.get('zones')
+        for _, zone in zones.items():
+            if self.latitude and self.longitude:
+                t = zone.verification(self.latitude, self.longitude)
+                print(t)
 
         return self
 
@@ -51,25 +53,19 @@ class Zone(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     radius = models.PositiveSmallIntegerField()
 
-    @staticmethod
-    def verification(latitude, longitude):
-        # print(latitude, longitude)
-        zones = cache.get('zones')
-        for k, v in zones.items():
-            dist = v.radius / 1000
-            mylat = v.latitude
-            mylon = v.longitude
-            lon1 = float(mylon) - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
-            lon2 = float(mylon) + dist / abs(math.cos(math.radians(mylat)) * 111.)
-            lat1 = float(mylat) - dist / 111.
-            lat2 = float(mylat) + dist / 111.
+    def verification(self, latitude, longitude):
+        dist = self.radius / 1000
+        mylat = self.latitude
+        mylon = self.longitude
+        lat1 = float(mylat) - dist / 111.
+        lat2 = float(mylat) + dist / 111.
+        lon1 = float(mylon) - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
+        lon2 = float(mylon) + dist / abs(math.cos(math.radians(mylat)) * 111.)
 
-            if lat1 > latitude and latitude < lat2 and lon1 > longitude and longitude < lon2:
-                # print('True')
-                return True
-            else:
-                # print('False')
-                return False
+        if lat1 < latitude and latitude < lat2 and lon1 < longitude and longitude < lon2:
+            return True
+        else:
+            return False
 
 
 class Entity(models.Model):
