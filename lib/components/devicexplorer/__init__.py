@@ -19,14 +19,15 @@ async def aio_initiate(engine, component):
         explorer = module.get_explorer(cfg)
 
     interval = cfg.get('interval', 10)
-    while True:
-        print(f'{component.uniq_id}...')
-        await asyncio.sleep(interval)
+    # while True:
+    print(f'{component.uniq_id}...')
+    # await asyncio.sleep(interval)
+    await asyncio.sleep(0)
 
-        devices = explorer.exploring_devices()
-        for d in devices:
-            d['component'] = component
-            deviceset.handle(d)
+    devices = explorer.exploring_devices()
+    for d in devices:
+        d['component'] = component
+        deviceset.handle(d)
 
     return 1
 

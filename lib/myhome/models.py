@@ -37,10 +37,10 @@ class Device(models.Model):
         for k in ['latitude', 'longitude', 'battery']:
             setattr(self, k, kwargs.get(k))
 
-        print(self.__dict__)
+        # print(self.__dict__)
         if self.latitude and self.longitude:
             t = Zone.verification(self.latitude, self.longitude)
-            print(t)
+            # print(t)
 
         return self
 
@@ -53,22 +53,22 @@ class Zone(models.Model):
 
     @staticmethod
     def verification(latitude, longitude):
-        print(latitude, longitude)
+        # print(latitude, longitude)
         zones = cache.get('zones')
         for k, v in zones.items():
             dist = v.radius / 1000
             mylat = v.latitude
             mylon = v.longitude
-            lon1 = mylon - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
-            lon2 = mylon + dist / abs(math.cos(math.radians(mylat)) * 111.)
-            lat1 = mylat - (dist / 111.)
-            lat2 = mylat + (dist / 111.)
+            lon1 = float(mylon) - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
+            lon2 = float(mylon) + dist / abs(math.cos(math.radians(mylat)) * 111.)
+            lat1 = float(mylat) - dist / 111.
+            lat2 = float(mylat) + dist / 111.
 
             if lat1 > latitude and latitude < lat2 and lon1 > longitude and longitude < lon2:
-                print('True')
+                # print('True')
                 return True
             else:
-                print('False')
+                # print('False')
                 return False
 
 

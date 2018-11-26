@@ -17,6 +17,31 @@ from core.eventbus import EventBus
 from myhome import models
 
 
+async def automatization(engine):
+    print('automatization')
+
+    atmz = {
+        'alias1': {
+            'trigger': {
+                'platform': 'zone',
+                'platform_id': 1,
+                'event': 'enter',
+            },
+        },
+        'alias2': {
+            'trigger': {
+                'platform': 'telegram_bot',
+            },
+        },
+    }
+
+    @engine.eventbus.listen(const.EVENT_ALL)
+    def test():
+        print(atmz)
+
+    return True
+
+
 class HomeEngine:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
@@ -48,6 +73,8 @@ async def aio_configuration(engine):
 
         # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
         tasks.append(module.aio_initiate(engine, row))
+
+    tasks.append(automatization(engine))
 
     await asyncio.wait(tasks)
         # print(engine.eventbus.__dict__)

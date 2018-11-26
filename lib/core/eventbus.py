@@ -1,6 +1,8 @@
 from collections import defaultdict
 from functools import wraps
 
+from core import const
+
 
 class EventBus:
     # __slots__ = '_events'
@@ -8,9 +10,9 @@ class EventBus:
     def __init__(self):
         self._events = defaultdict(set)
 
-    def listen(self, event, once=0):
+    def listen(self, event):
         def outer(func):
-            self._add_event(event, func)
+            self._events[event].add(func)
 
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -22,12 +24,12 @@ class EventBus:
 
     def throw(self, event):
         for func in self._event_funcs(event):
-            # func(*args, **kwargs)
             func()
+
+        if event != const.EVENT_ALL:
+            for func in self._event_funcs(const.EVENT_ALL):
+                func()
 
     def _event_funcs(self, event):
         for func in self._events[event]:
             yield func
-
-    def _add_event(self, event, func):
-        self._events[event].add(func)

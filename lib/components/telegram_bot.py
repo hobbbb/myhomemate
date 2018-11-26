@@ -63,8 +63,6 @@ async def aio_initiate(engine, component):
     def _start_polling():
         bot.start_polling()
 
-    # engine.eventbus.async_listen_once('start_engine', bot.start_polling)
-
     return True
 
 
