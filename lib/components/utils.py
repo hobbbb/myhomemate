@@ -1,9 +1,11 @@
 import glob
-import importlib
+# import importlib
 import os
+
 
 currfile = os.path.abspath(__file__)
 currdir = os.path.dirname(currfile)
+
 
 def get_urls_modules():
     file_tpl = 'urls'

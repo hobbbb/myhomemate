@@ -1,5 +1,4 @@
 import math
-import time
 from jsonfield import JSONField
 
 from django.contrib.auth.models import User
@@ -60,7 +59,7 @@ class Zone(models.Model):
             dist = v.radius / 1000
             mylat = v.latitude
             mylon = v.longitude
-            lon1 = mylon - dist / abs(math.cos(math.radians(mylat)) * 111.) # 1 градус широты = 111 км
+            lon1 = mylon - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
             lon2 = mylon + dist / abs(math.cos(math.radians(mylat)) * 111.)
             lat1 = mylat - (dist / 111.)
             lat2 = mylat + (dist / 111.)

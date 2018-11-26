@@ -37,16 +37,16 @@ def component_list(request, filt='active'):
 
 def component_edit(request, id):
     component = models.Component.objects.get(id=id)
-    module = importlib.import_module('components.{}'.format(component.uniq_id))
+    component_module = importlib.import_module(f'components.{component.uniq_id}')
 
     if request.method == 'POST':
-        form = module.ComponentSetupForm(request.POST)
+        form = component_module.ComponentSetupForm(request.POST)
         if form.is_valid():
             component.data = form.cleaned_data
             component.save()
             return HttpResponseRedirect(reverse('act_components'))
     else:
-        form = module.ComponentSetupForm(component.data)
+        form = component_module.ComponentSetupForm(component.data)
 
     data = {
         'component': component,
@@ -57,9 +57,8 @@ def component_edit(request, id):
 
 def device_list(request, component_id=None):
     component = models.Component.objects.get(id=1)
-    module = importlib.import_module('components.{}'.format(component.name))
-
-    editable = True if hasattr(module, 'DeviceSetupForm') else False
+    component_module = importlib.import_module(f'components.{component.uniq_id}')
+    editable = True if hasattr(component_module, 'DeviceSetupForm') else False
 
     data = {
         'devices': component.device_set.all(),
@@ -70,16 +69,16 @@ def device_list(request, component_id=None):
 
 def device_edit(request, id):
     device = models.Device.objects.get(id=id)
-    module = importlib.import_module('components.{}'.format(device.component.name))
+    component_module = importlib.import_module(f'components.{device.component.name}')
 
     if request.method == 'POST':
-        form = module.DeviceSetupForm(request.POST)
+        form = component_module.DeviceSetupForm(request.POST)
         # if form.is_valid():
         #     component.data = json.dumps(form.cleaned_data)
         #     component.save()
         #     return HttpResponseRedirect(reverse('act_components'))
     else:
-        form = module.DeviceSetupForm(device.data)
+        form = component_module.DeviceSetupForm(device.data)
 
     data = {
         'device': device,
