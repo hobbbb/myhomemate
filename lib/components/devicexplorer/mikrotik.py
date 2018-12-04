@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import asyncio
 import logging
 
 from django import forms
@@ -134,6 +135,11 @@ class MikrotikExplorer(BaseExplorer):
         return True
 
     def exploring_devices(self):
+        self._exploring_devices()
+        return self.exploring_results
+
+    async def aio_exploring_devices(self):
+        print('Mikrotik aio_exploring_devices')
         self._exploring_devices()
         return self.exploring_results
 

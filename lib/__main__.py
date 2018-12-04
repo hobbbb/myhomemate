@@ -68,15 +68,27 @@ async def aio_configuration(engine):
     zones = {z.id: z for z in models.Zone.objects.all()}
     cache.set('zones', zones, None)
 
-    tasks = []
-
+    components = defaultdict(list)
     qs = models.Component.objects.filter(is_active=True)
     for row in qs:
         sp = row.uniq_id.split('.')
-        module = importlib.import_module('components.{}'.format(sp[0]))
+        if len(sp) > 1:
+            components[sp[0]].append(row)
+        else:
+            components[sp[0]] = row
 
-        # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
+    tasks = []
+    for name, data in components.items():
+        module = importlib.import_module(f'components.{name}')
         tasks.append(module.aio_initiate(engine, row))
+
+    # qs = models.Component.objects.filter(is_active=True)
+    # for row in qs:
+    #     sp = row.uniq_id.split('.')
+    #     module = importlib.import_module('components.{}'.format(sp[0]))
+
+    #     # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
+    #     tasks.append(module.aio_initiate(engine, row))
 
     tasks.append(automatization(engine))
 
@@ -98,4 +110,6 @@ async def setup_and_run():
 
 if __name__ == "__main__":
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    loop = asyncio.new_event_loop()
+    loop.set_debug(True)
     asyncio.run(setup_and_run())

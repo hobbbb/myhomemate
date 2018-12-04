@@ -37,7 +37,6 @@ class Device(models.Model):
         for k in ['latitude', 'longitude', 'battery']:
             setattr(self, k, kwargs.get(k))
 
-        # print(self.__dict__)
         zones = cache.get('zones')
         for _, zone in zones.items():
             if self.latitude and self.longitude:

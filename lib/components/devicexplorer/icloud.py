@@ -74,6 +74,6 @@ class ICloudExplorer(BaseExplorer):
         return self.exploring_results
 
     async def aio_exploring_devices(self):
-        await asyncio.sleep(self.interval)
+        print('Icloud aio_exploring_devices')
         self._exploring_devices()
         return self.exploring_results
