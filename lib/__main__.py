@@ -46,12 +46,16 @@ class HomeEngine:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
         self.eventbus = EventBus()
+        self.hold = None
 
     async def aio_run(self):
         print('run')
 
+        self.hold = asyncio.Event()
+
         self.eventbus.throw(const.EVENT_START_ENGINE)
-        await asyncio.sleep(1)
+
+        await self.hold.wait()
 
     def aio_add_task(self, tgt, *args):
         task = self.loop.create_task(tgt)
