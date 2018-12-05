@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import time
 
 from django import forms
 
@@ -32,6 +33,7 @@ class ComponentSetupForm(forms.Form):
 def get_explorer(config):
     print('micro setup start')
     explorer = MikrotikExplorer(config)
+    time.sleep(10)
     # return explorer if explorer.exploring_init else None
     print('micro setup finished')
     return explorer
@@ -139,7 +141,6 @@ class MikrotikExplorer(BaseExplorer):
 
     def exploring_devices(self):
         print('mikrooooooo')
-        return ['1', '2']
         self._exploring_devices()
         return self.exploring_results
 

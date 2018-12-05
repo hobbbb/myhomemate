@@ -125,4 +125,7 @@ if __name__ == "__main__":
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.new_event_loop()
     loop.set_debug(True)
-    asyncio.run(setup_and_run())
+    try:
+        asyncio.run(setup_and_run())
+    except KeyboardInterrupt:
+        loop.stop()

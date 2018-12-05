@@ -26,7 +26,10 @@ async def aio_initiate(engine, component_list):
         # elif hasattr(module, 'get_explorer'):
         #     explorer = module.get_explorer(cfg)
 
-        engine.aio_add_task(module.get_explorer, cfg)
+        explorer = engine.aio_add_task(module.get_explorer, cfg)
+        return explorer
+        # d = explorer.exploring_devices()
+        # print(d)
         # explorer = module.get_explorer(cfg)
 
         # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
@@ -39,6 +42,13 @@ async def aio_initiate(engine, component_list):
 
     tasks = [setup_explorer(c) for c in component_list]
     done, pending = await asyncio.wait(tasks, loop=engine.loop)
+    for t in done:
+        res = t.result()
+        print(res.exploring_devices())
+    # for future in asyncio.as_completed(tasks):
+    #     result = await future
+    #     # d = result.exploring_devices()
+    #     print(result.result())
 
     # known_devices = component.device_set.all()
     # deviceset = DeviceSet(known_devices)
@@ -56,7 +66,7 @@ async def aio_initiate(engine, component_list):
     #     r = round(loop_time) % 6
     #     print(loop_time, r)
 
-    return 1
+    # return 1
 
 
 class DeviceSet:
