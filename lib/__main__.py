@@ -5,16 +5,28 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myhome.settings")
 django.setup()
 from django.core.cache import cache
+from django.utils import timezone
 
 import asyncio
 import importlib
 import uvloop
 from collections import defaultdict
-from functools import wraps
+from time import monotonic
 
 from core import const
 from core.eventbus import EventBus
 from myhome import models
+
+
+def run_timer(engine):
+    def schedule_timer():
+        engine.loop.call_later(1, throw_time_event)
+
+    def throw_time_event():
+        engine.eventbus.throw(const.EVENT_TIME_CHANGED)
+        schedule_timer()
+
+    schedule_timer()
 
 
 async def automatization(engine):
@@ -37,7 +49,8 @@ async def automatization(engine):
 
     @engine.eventbus.listen(const.EVENT_ALL)
     def test():
-        print(atmz)
+        # print(atmz)
+        pass
 
     return True
 
@@ -65,6 +78,10 @@ class HomeEngine:
 async def aio_configuration(engine):
     print('aio_configuration')
 
+    @engine.eventbus.listen(const.EVENT_START_ENGINE)
+    def _run_timer():
+        run_timer(engine)
+
     zones = {z.id: z for z in models.Zone.objects.all()}
     cache.set('zones', zones, None)
 
@@ -82,22 +99,9 @@ async def aio_configuration(engine):
         module = importlib.import_module(f'components.{name}')
         tasks.append(module.aio_initiate(engine, row))
 
-    # qs = models.Component.objects.filter(is_active=True)
-    # for row in qs:
-    #     sp = row.uniq_id.split('.')
-    #     module = importlib.import_module('components.{}'.format(sp[0]))
-
-    #     # component_config = (sp[1], row.data) if len(sp) > 1 else row.data
-    #     tasks.append(module.aio_initiate(engine, row))
-
     tasks.append(automatization(engine))
 
     await asyncio.wait(tasks)
-        # print(engine.eventbus.__dict__)
-        # await engine.aio_add_job(scanner.scan_devices)
-        # engine.loop.create_task(scanner.aio_scan_devices())
-
-    # await asyncio.sleep(3)
 
 
 async def setup_and_run():
