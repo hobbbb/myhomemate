@@ -6,35 +6,36 @@ from core import const
 from myhome.models import Device
 
 
-def schedule(func, interval, engine):
-    async def periodic_func():
-        while True:
-            await func()
-            await asyncio.sleep(interval, loop=engine.loop)
+# def schedule(func, interval, engine):
+#     async def periodic_func():
+#         while True:
+#             await func()
+#             await asyncio.sleep(interval, loop=engine.loop)
 
-    return loop.create_task(periodic_func())
+#     return loop.create_task(periodic_func())
 
 
 async def aio_initiate(engine, component_list):
     async def setup_explorer(component):
         module = importlib.import_module(f'components.{component.uniq_id}')
         cfg = component.data
-        interval = cfg.get('interval', 10)
+        # interval = cfg.get('interval', 10)
 
         # if hasattr(module, 'aio_get_explorer'):
         #     explorer = await asyncio.wait([module.aio_get_explorer(cfg)])
         # elif hasattr(module, 'get_explorer'):
         #     explorer = module.get_explorer(cfg)
 
-        explorer = module.get_explorer(cfg)
+        engine.aio_add_task(module.get_explorer, cfg)
+        # explorer = module.get_explorer(cfg)
 
-        @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
-        def _explore_devices():
-            loop_time = engine.loop.time()
-            r = round(loop_time) % interval
-            print(r)
-            if not r:
-                explorer.exploring_devices()
+        # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
+        # def _explore_devices():
+        #     loop_time = engine.loop.time()
+        #     r = round(loop_time) % interval
+        #     print(r)
+        #     if not r:
+        #         explorer.exploring_devices()
 
     tasks = [setup_explorer(c) for c in component_list]
     done, pending = await asyncio.wait(tasks, loop=engine.loop)

@@ -22,7 +22,7 @@
             {% for c in components %}
             <tr>
                 <td>{{ c.name }}</td>
-                <td><a href="/components/{{ c.id }}"><span class="oi oi-wrench"></span></a></td>
+                <td><a href="{% url 'component_edit' id=c.id %}"><span class="oi oi-wrench"></span></a></td>
             </tr>
             {% endfor %}
         </tbody>

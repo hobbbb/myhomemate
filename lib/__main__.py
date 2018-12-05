@@ -70,8 +70,17 @@ class HomeEngine:
 
         await self.hold.wait()
 
-    def aio_add_task(self, tgt, *args):
-        task = self.loop.create_task(tgt)
+    def aio_add_task(self, target, *args):
+        if asyncio.iscoroutine(target):
+            print('iscoroutine')
+            task = self.loop.create_task(target)
+        elif asyncio.iscoroutinefunction(target):
+            print('iscoroutinefunction')
+            task = self.loop.create_task(target)
+        else:
+            print('fuck')
+            task = self.loop.run_in_executor(None, target, *args)
+
         return task
 
 

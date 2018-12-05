@@ -28,7 +28,10 @@ class ComponentSetupForm(forms.Form):
 
 
 def get_explorer(config):
-    return ICloudExplorer(config)
+    print('icloud setup start')
+    explorer = ICloudExplorer(config)
+    print('icloud setup finished')
+    return explorer
 
 
 class ICloudExplorer(BaseExplorer):
@@ -70,6 +73,7 @@ class ICloudExplorer(BaseExplorer):
             })
 
     def exploring_devices(self):
+        print('iclouddddd')
         self._exploring_devices()
         return self.exploring_results
 

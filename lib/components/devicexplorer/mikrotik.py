@@ -30,8 +30,11 @@ class ComponentSetupForm(forms.Form):
 
 
 def get_explorer(config):
+    print('micro setup start')
     explorer = MikrotikExplorer(config)
-    return explorer if explorer.exploring_init else None
+    # return explorer if explorer.exploring_init else None
+    print('micro setup finished')
+    return explorer
 
 
 class MikrotikExplorer(BaseExplorer):
@@ -135,6 +138,8 @@ class MikrotikExplorer(BaseExplorer):
         return True
 
     def exploring_devices(self):
+        print('mikrooooooo')
+        return ['1', '2']
         self._exploring_devices()
         return self.exploring_results
 
