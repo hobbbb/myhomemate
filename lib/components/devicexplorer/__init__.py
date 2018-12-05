@@ -23,11 +23,21 @@ async def aio_initiate(engine, component_list):
 
         # if hasattr(module, 'aio_get_explorer'):
         #     explorer = await asyncio.wait([module.aio_get_explorer(cfg)])
-        if hasattr(module, 'get_explorer'):
-            explorer = module.get_explorer(cfg)
+        # elif hasattr(module, 'get_explorer'):
+        #     explorer = module.get_explorer(cfg)
 
-    # tasks = [setup_explorer(c) for c in component_list]
-    # done, pending = await asyncio.wait(tasks, loop=engine.loop)
+        explorer = module.get_explorer(cfg)
+
+        @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
+        def _explore_devices():
+            loop_time = engine.loop.time()
+            r = round(loop_time) % interval
+            print(r)
+            if not r:
+                explorer.exploring_devices()
+
+    tasks = [setup_explorer(c) for c in component_list]
+    done, pending = await asyncio.wait(tasks, loop=engine.loop)
 
     # known_devices = component.device_set.all()
     # deviceset = DeviceSet(known_devices)
@@ -39,11 +49,11 @@ async def aio_initiate(engine, component_list):
 
     # schedule(explorer.aio_exploring_devices, interval=interval, engine=engine)
 
-    @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
-    def _explore_devices():
-        loop_time = engine.loop.time()
-        r = round(loop_time) % 6
-        print(loop_time, r)
+    # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
+    # def _explore_devices():
+    #     loop_time = engine.loop.time()
+    #     r = round(loop_time) % 6
+    #     print(loop_time, r)
 
     return 1
 

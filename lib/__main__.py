@@ -97,7 +97,7 @@ async def aio_configuration(engine):
     tasks = []
     for name, data in components.items():
         module = importlib.import_module(f'components.{name}')
-        tasks.append(module.aio_initiate(engine, row))
+        tasks.append(module.aio_initiate(engine, data))
 
     tasks.append(automatization(engine))
 
