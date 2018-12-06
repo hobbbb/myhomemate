@@ -21,29 +21,10 @@ async def aio_initiate(engine, component_list):
         #     explorer = module.get_explorer(cfg)
 
         explorer = await engine.loop_create_task(module.get_explorer, cfg)
-        do_exploring(explorer, deviceset, engine)
-
-        # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
-        # def _explore_devices():
-        #     loop_time = engine.loop.time()
-        #     r = round(loop_time) % interval
-        #     print(r)
-        #     if not r:
-        #         explorer.exploring_devices()
+        do_exploring(explorer, deviceset, component)
 
     tasks = [setup_explorer(c) for c in component_list]
     await asyncio.wait(tasks, loop=engine.loop)
-
-    # devices = explorer.exploring_devices()
-    # for d in devices:
-    #     d['component'] = component
-    #     deviceset.handle(d)
-
-    # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
-    # def _explore_devices():
-    #     loop_time = engine.loop.time()
-    #     r = round(loop_time) % 6
-    #     print(loop_time, r)
 
 
 class DeviceSet:
@@ -70,6 +51,16 @@ class BaseExplorer:
         raise NotImplementedError()
 
 
-def do_exploring(explorer, deviceset, engine):
-    res = explorer.exploring_devices()
-    print(res)
+def do_exploring(explorer, deviceset, component):
+    devices = explorer.exploring_devices()
+    for d in devices:
+        d['component'] = component
+        deviceset.handle(d)
+
+    # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
+    # def _explore_devices():
+    #     loop_time = engine.loop.time()
+    #     r = round(loop_time) % interval
+    #     print(r)
+    #     if not r:
+    #         explorer.exploring_devices()
