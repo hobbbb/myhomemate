@@ -28,10 +28,7 @@ class ComponentSetupForm(forms.Form):
 
 
 def get_explorer(config):
-    print('icloud setup start')
-    explorer = ICloudExplorer(config)
-    print('icloud setup finished')
-    return explorer
+    return ICloudExplorer(config)
 
 
 class ICloudExplorer(BaseExplorer):
@@ -48,7 +45,7 @@ class ICloudExplorer(BaseExplorer):
             self.user, self.password, self.user
         )
         try:
-            http_resp = requests.post(url, timeout=2, verify=False)
+            http_resp = requests.post(url, timeout=5, verify=False)
         except requests.exceptions.RequestException as e:
             logger.error(u'exception: "{}"'.format(e))
             return

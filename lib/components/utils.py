@@ -32,7 +32,6 @@ def get_apps():
         app = d[begin:-1]
         if app == '__pycache__':
             continue
-        print(app)
     # file_tpl = 'urls'
     # res = []
     # for file in glob.iglob('{}/**/{}.py'.format(currdir, file_tpl), recursive=True):

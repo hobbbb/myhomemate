@@ -8,18 +8,18 @@ from myhome.models import Device
 
 async def aio_initiate(engine, component_list):
     known_devices = Device.objects.all()
-    deviceset = DeviceSet(engine, known_devices)
+    tracker = Tracker(engine, known_devices)
 
     async def setup_explorer(component):
         module = importlib.import_module(f'components.{component.uniq_id}')
         explorer = await engine.loop_create_task(module.get_explorer, component.data)
-        deviceset.do_exploring(explorer, component)
+        tracker.do_exploring(explorer, component)
 
     tasks = [setup_explorer(c) for c in component_list]
     await asyncio.wait(tasks, loop=engine.loop)
 
 
-class DeviceSet:
+class Tracker:
     def __init__(self, engine, devices):
         self.engine = engine
         self.devices = {d.uniq_id: d for d in devices}
@@ -41,18 +41,16 @@ class DeviceSet:
     def do_exploring(self, explorer, component):
         interval = component.data.get('interval', 10)
 
-        # devices = explorer.exploring_devices()
-        # for d in devices:
-        #     d['component'] = component
-        #     self.handle(d)
-
         @self.engine.eventbus.listen(const.EVENT_TIME_CHANGED)
         def _explore_devices():
             loop_time = self.engine.loop.time()
             r = round(loop_time) % interval
             if not r:
-                print(f'{loop_time} -- {r} -- {interval} -- {component.name}')
-                explorer.exploring_devices()
+                # print(f'{loop_time} -- {r} -- {interval} -- {component.name}')
+                devices = explorer.exploring_devices()
+                for d in devices:
+                    d['component'] = component
+                    self.handle(d)
 
 
 class BaseExplorer:

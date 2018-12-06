@@ -38,10 +38,14 @@ class Device(models.Model):
             setattr(self, k, kwargs.get(k))
 
         zones = cache.get('zones')
-        for _, zone in zones.items():
-            if self.latitude and self.longitude:
-                t = zone.verification(self.latitude, self.longitude)
-                print(t)
+        for _, zn in zones.items():
+            if not (self.latitude and self.longitude):
+                continue
+
+            in_zone = zn.verification(self.latitude, self.longitude)
+            if in_zone is True:
+                self.zone = zn.id
+            print(self, ' in zone' if t else ' out of zone')
 
         return self
 
