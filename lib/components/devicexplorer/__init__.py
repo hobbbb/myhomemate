@@ -2,7 +2,7 @@ import asyncio
 import importlib
 import time
 
-from core import const
+# from core import const
 from myhome.models import Device
 
 
@@ -16,6 +16,9 @@ from myhome.models import Device
 
 
 async def aio_initiate(engine, component_list):
+    known_devices = Device.objects.all()
+    deviceset = DeviceSet(known_devices)
+
     async def setup_explorer(component):
         module = importlib.import_module(f'components.{component.uniq_id}')
         cfg = component.data
@@ -26,8 +29,10 @@ async def aio_initiate(engine, component_list):
         # elif hasattr(module, 'get_explorer'):
         #     explorer = module.get_explorer(cfg)
 
-        explorer = engine.aio_add_task(module.get_explorer, cfg)
+        explorer = await engine.aio_add_task(module.get_explorer, cfg)
+        # do_exploring(explorer, deviceset, engine)
         return explorer
+
         # d = explorer.exploring_devices()
         # print(d)
         # explorer = module.get_explorer(cfg)
@@ -45,13 +50,11 @@ async def aio_initiate(engine, component_list):
     for t in done:
         res = t.result()
         print(res.exploring_devices())
+
     # for future in asyncio.as_completed(tasks):
     #     result = await future
     #     # d = result.exploring_devices()
     #     print(result.result())
-
-    # known_devices = component.device_set.all()
-    # deviceset = DeviceSet(known_devices)
 
     # devices = explorer.exploring_devices()
     # for d in devices:
@@ -91,3 +94,14 @@ class DeviceSet:
 class BaseExplorer:
     def exploring_devices(self):
         raise NotImplementedError()
+
+
+def do_exploring(explorer, deviceset, engine):
+    lock = asyncio.Lock(loop=engine.loop)
+
+    async def device_scan():
+        async with lock:
+            res = await explorer.aio_exploring_devices()
+            print(res)
+
+    engine.loop.create_task(device_scan())
