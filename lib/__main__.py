@@ -78,7 +78,6 @@ class HomeEngine:
             print('iscoroutinefunction')
             task = self.loop.create_task(target)
         else:
-            print('fuck')
             task = self.loop.run_in_executor(None, target, *args)
 
         return task

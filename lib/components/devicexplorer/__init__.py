@@ -2,33 +2,26 @@ import asyncio
 import importlib
 import time
 
-# from core import const
+from core import const
 from myhome.models import Device
 
 
 async def aio_initiate(engine, component_list):
     known_devices = Device.objects.all()
-    deviceset = DeviceSet(known_devices)
+    deviceset = DeviceSet(engine, known_devices)
 
     async def setup_explorer(component):
         module = importlib.import_module(f'components.{component.uniq_id}')
-        cfg = component.data
-        # interval = cfg.get('interval', 10)
-
-        # if hasattr(module, 'aio_get_explorer'):
-        #     explorer = await asyncio.wait([module.aio_get_explorer(cfg)])
-        # elif hasattr(module, 'get_explorer'):
-        #     explorer = module.get_explorer(cfg)
-
-        explorer = await engine.loop_create_task(module.get_explorer, cfg)
-        do_exploring(explorer, deviceset, component)
+        explorer = await engine.loop_create_task(module.get_explorer, component.data)
+        deviceset.do_exploring(explorer, component)
 
     tasks = [setup_explorer(c) for c in component_list]
     await asyncio.wait(tasks, loop=engine.loop)
 
 
 class DeviceSet:
-    def __init__(self, devices):
+    def __init__(self, engine, devices):
+        self.engine = engine
         self.devices = {d.uniq_id: d for d in devices}
 
     def handle(self, data):
@@ -45,22 +38,23 @@ class DeviceSet:
 
         self.devices[device.uniq_id] = device
 
+    def do_exploring(self, explorer, component):
+        interval = component.data.get('interval', 10)
+
+        # devices = explorer.exploring_devices()
+        # for d in devices:
+        #     d['component'] = component
+        #     self.handle(d)
+
+        @self.engine.eventbus.listen(const.EVENT_TIME_CHANGED)
+        def _explore_devices():
+            loop_time = self.engine.loop.time()
+            r = round(loop_time) % interval
+            if not r:
+                print(f'{loop_time} -- {r} -- {interval} -- {component.name}')
+                explorer.exploring_devices()
+
 
 class BaseExplorer:
     def exploring_devices(self):
         raise NotImplementedError()
-
-
-def do_exploring(explorer, deviceset, component):
-    devices = explorer.exploring_devices()
-    for d in devices:
-        d['component'] = component
-        deviceset.handle(d)
-
-    # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
-    # def _explore_devices():
-    #     loop_time = engine.loop.time()
-    #     r = round(loop_time) % interval
-    #     print(r)
-    #     if not r:
-    #         explorer.exploring_devices()

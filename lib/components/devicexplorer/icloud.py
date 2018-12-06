@@ -73,11 +73,5 @@ class ICloudExplorer(BaseExplorer):
             })
 
     def exploring_devices(self):
-        print('iclouddddd')
-        self._exploring_devices()
-        return self.exploring_results
-
-    async def aio_exploring_devices(self):
-        print('Icloud aio_exploring_devices')
         self._exploring_devices()
         return self.exploring_results

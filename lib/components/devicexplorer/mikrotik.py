@@ -140,28 +140,5 @@ class MikrotikExplorer(BaseExplorer):
         return True
 
     def exploring_devices(self):
-        print('mikrooooooo')
         self._exploring_devices()
         return self.exploring_results
-
-    async def aio_exploring_devices(self):
-        print('Mikrotik aio_exploring_devices')
-        self._exploring_devices()
-        return self.exploring_results
-
-# async def aio_run():
-#     await asyncio.sleep(0)
-
-#     config = get_component_config()
-#     if not config:
-#         return
-
-#     s = MikrotikExplorer(dict(
-#         host=config['host'],
-#         port=config['port'],
-#         username=config['user'],
-#         password=config['password'],
-#     ))
-
-#     # update_devices(s.exploring_results)
-#     print(s.exploring_results)
