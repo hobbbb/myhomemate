@@ -6,15 +6,6 @@ import time
 from myhome.models import Device
 
 
-# def schedule(func, interval, engine):
-#     async def periodic_func():
-#         while True:
-#             await func()
-#             await asyncio.sleep(interval, loop=engine.loop)
-
-#     return loop.create_task(periodic_func())
-
-
 async def aio_initiate(engine, component_list):
     known_devices = Device.objects.all()
     deviceset = DeviceSet(known_devices)
@@ -32,10 +23,6 @@ async def aio_initiate(engine, component_list):
         explorer = await engine.loop_create_task(module.get_explorer, cfg)
         do_exploring(explorer, deviceset, engine)
 
-        # d = explorer.exploring_devices()
-        # print(d)
-        # explorer = module.get_explorer(cfg)
-
         # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
         # def _explore_devices():
         #     loop_time = engine.loop.time()
@@ -47,29 +34,16 @@ async def aio_initiate(engine, component_list):
     tasks = [setup_explorer(c) for c in component_list]
     await asyncio.wait(tasks, loop=engine.loop)
 
-    # for t in done:
-    #     res = t.result()
-    #     print(res.exploring_devices())
-
-    # for future in asyncio.as_completed(tasks):
-    #     result = await future
-    #     # d = result.exploring_devices()
-    #     print(result.result())
-
     # devices = explorer.exploring_devices()
     # for d in devices:
     #     d['component'] = component
     #     deviceset.handle(d)
-
-    # schedule(explorer.aio_exploring_devices, interval=interval, engine=engine)
 
     # @engine.eventbus.listen(const.EVENT_TIME_CHANGED)
     # def _explore_devices():
     #     loop_time = engine.loop.time()
     #     r = round(loop_time) % 6
     #     print(loop_time, r)
-
-    # return 1
 
 
 class DeviceSet:
