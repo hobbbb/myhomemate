@@ -29,9 +29,8 @@ async def aio_initiate(engine, component_list):
         # elif hasattr(module, 'get_explorer'):
         #     explorer = module.get_explorer(cfg)
 
-        explorer = await engine.aio_add_task(module.get_explorer, cfg)
-        # do_exploring(explorer, deviceset, engine)
-        return explorer
+        explorer = await engine.loop_create_task(module.get_explorer, cfg)
+        do_exploring(explorer, deviceset, engine)
 
         # d = explorer.exploring_devices()
         # print(d)
@@ -46,10 +45,11 @@ async def aio_initiate(engine, component_list):
         #         explorer.exploring_devices()
 
     tasks = [setup_explorer(c) for c in component_list]
-    done, pending = await asyncio.wait(tasks, loop=engine.loop)
-    for t in done:
-        res = t.result()
-        print(res.exploring_devices())
+    await asyncio.wait(tasks, loop=engine.loop)
+
+    # for t in done:
+    #     res = t.result()
+    #     print(res.exploring_devices())
 
     # for future in asyncio.as_completed(tasks):
     #     result = await future
@@ -97,11 +97,5 @@ class BaseExplorer:
 
 
 def do_exploring(explorer, deviceset, engine):
-    lock = asyncio.Lock(loop=engine.loop)
-
-    async def device_scan():
-        async with lock:
-            res = await explorer.aio_exploring_devices()
-            print(res)
-
-    engine.loop.create_task(device_scan())
+    res = explorer.exploring_devices()
+    print(res)
