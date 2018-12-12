@@ -157,3 +157,8 @@ def automation_edit(request, id):
 def log_list(request):
     data = {}
     return render(request, 'logs.html', data)
+
+
+def map(request):
+    data = {}
+    return render(request, 'map.html', data)

@@ -24,6 +24,7 @@ urlpatterns = [
     path('automations/',                views.automation_list, name='automation_list'),
     path('automations/<int:id>/',       views.automation_edit, name='automation_edit'),
     path('logs/',                       views.log_list, name='log_list'),
+    path('map/',                        views.map, name='map'),
 ]
 
 

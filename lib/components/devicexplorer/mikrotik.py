@@ -7,7 +7,6 @@ import time
 from django import forms
 
 from . import BaseExplorer
-from myhome.api import register_component
 
 
 REQUIREMENTS = ['librouteros']

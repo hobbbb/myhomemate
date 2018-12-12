@@ -45,7 +45,7 @@ class Device(models.Model):
             in_zone = zn.verification(self.latitude, self.longitude)
             if in_zone is True:
                 self.zone = zn.id
-            print(self, ' in zone' if t else ' out of zone')
+            print(self, ' in zone' if in_zone else ' out of zone')
 
         return self
 
@@ -56,16 +56,20 @@ class Zone(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     radius = models.PositiveSmallIntegerField()
 
-    def verification(self, latitude, longitude):
-        dist = self.radius / 1000
-        mylat = self.latitude
-        mylon = self.longitude
-        lat1 = float(mylat) - dist / 111.
-        lat2 = float(mylat) + dist / 111.
-        lon1 = float(mylon) - dist / abs(math.cos(math.radians(mylat)) * 111.)  # 1 градус широты = 111 км
-        lon2 = float(mylon) + dist / abs(math.cos(math.radians(mylat)) * 111.)
+    def verification(self, mlat, mlon, acc=50):
+        earth_radius = 6371
+        slat = float(self.latitude)
+        slon = float(self.longitude)
+        dlat = math.radians(mlat - slat)
+        dlon = math.radians(mlon - slon)
+        slat = math.radians(slat)
+        mlat = math.radians(mlat)
 
-        if lat1 < latitude and latitude < lat2 and lon1 < longitude and longitude < lon2:
+        a = math.sin(dlat / 2) ** 2 + (math.sin(dlon / 2) ** 2) * math.cos(slat) * math.cos(mlat)
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        dist = earth_radius * c * 1000
+
+        if dist < self.radius + acc:
             return True
         else:
             return False
