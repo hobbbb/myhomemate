@@ -4,6 +4,7 @@ import time
 
 from core import const
 from myhome.models import Device
+from myhome import mqtt
 
 
 async def aio_initiate(engine, component_list):
@@ -30,6 +31,7 @@ class Tracker:
             device = device.refresh(**data)
         else:
             device = Device(**data)
+            mqtt.publish_event('event/devicexplorer/new_device', 'new_device')
 
         now = time.time()
         if not device.last_saved or device.last_saved < now - 5 * 60:

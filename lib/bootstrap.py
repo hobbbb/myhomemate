@@ -51,7 +51,7 @@ def setup():
         'Django==2.1.2',
         'mysqlclient==1.3.13',
         'python3-memcached',
-        'celery',
+        'paho-mqtt',
     ]:
         requirements.add(r)
 

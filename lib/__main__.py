@@ -15,7 +15,7 @@ from time import monotonic
 
 from core import const
 from core.eventbus import EventBus
-from myhome import models
+from myhome import models, mqtt
 
 
 def run_timer(engine):
@@ -67,6 +67,7 @@ class HomeEngine:
         self.hold = asyncio.Event()
 
         self.eventbus.throw(const.EVENT_START_ENGINE)
+        mqtt.publish_event(f'event/{const.EVENT_START_ENGINE}')
 
         await self.hold.wait()
 
