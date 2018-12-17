@@ -70,7 +70,6 @@ class HomeEngine:
         self.hold = asyncio.Event()
 
         self.eventbus.throw(const.EVENT_START_ENGINE)
-        # mqtt.publish_event(const.EVENT_START_ENGINE)
 
         self.scheduler.print_jobs()
         self.scheduler.start()

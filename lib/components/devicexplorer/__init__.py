@@ -4,7 +4,6 @@ import time
 
 from core import const
 from myhome.models import Device
-from myhome import mqtt
 
 
 async def aio_initiate(engine, component_list):
@@ -42,8 +41,7 @@ class Tracker:
             device.save()
 
         if is_new is True:
-            mqtt.publish_event(const.EVENT_NEW_DEVICE_FOUND, device.id)
-            pass
+            print('new_device')
 
         self.devices[device.uniq_id] = device
 

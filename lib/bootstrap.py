@@ -51,7 +51,6 @@ def setup():
         'Django==2.1.2',
         'mysqlclient==1.3.13',
         'python3-memcached',
-        'paho-mqtt',
         'APScheduler',
     ]:
         requirements.add(r)
