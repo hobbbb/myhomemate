@@ -14,7 +14,7 @@ def on_message(client, userdata, msg):
     print(f'{msg.topic} {data}')
 
 
-mqtt_client = mqtt.Client()
+mqtt_client = mqtt.Client('myhome')
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
 
