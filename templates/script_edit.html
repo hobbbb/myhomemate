@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="m-3">
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-dark">Сохранить</button>
+        {% endbuttons %}
+    </form>
+</div>
+{% endblock %}

@@ -162,3 +162,37 @@ def log_list(request):
 def map(request):
     data = {}
     return render(request, 'map.html', data)
+
+
+def script_list(request):
+    scripts = models.Script.objects.all()
+
+    data = {
+        'scripts': scripts,
+    }
+    return render(request, 'scripts.html', data)
+
+
+def script_edit(request, id=None):
+    if id:
+        script = models.Script.objects.get(pk=id)
+        if request.method == 'POST':
+            form = forms.ScriptForm(request.POST, instance=script)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('script_list'))
+        else:
+            form = forms.ScriptForm(instance=script)
+    else:
+        if request.method == 'POST':
+            form = forms.ScriptForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('script_list'))
+        else:
+            form = forms.ScriptForm()
+
+    data = {
+        'form': form
+    }
+    return render(request, 'script_edit.html', data)

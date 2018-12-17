@@ -88,8 +88,9 @@ class Entity(models.Model):
 #     name = models.CharField(max_length=50)
 
 
-class Service(models.Model):
+class Script(models.Model):
     name = models.CharField(max_length=200, unique=True)
+    text = models.TextField()
 
 
 # class AutomationTrigger(models.Model):
