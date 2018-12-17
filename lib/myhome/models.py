@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import models
 
-from myhome import mqtt
+# from myhome import mqtt
 
 
 class Component(models.Model):
@@ -47,14 +47,13 @@ class Device(models.Model):
             in_zone = zn.verification(self.latitude, self.longitude)
             if self.zone != zn.id:
                 print('zone changed !!!!')
-                mqtt.publish_event('event/zone/changed', {'test': 1})
+                # mqtt.publish_event('event/zone/changed', {'test': 1})
             if in_zone is True:
                 self.zone = zn.id
             else:
                 self.zone = None
 
             # print(self, ' in zone' if in_zone else ' out of zone')
-            print(f'{self.name} {self.zone}')
 
         return self
 

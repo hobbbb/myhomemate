@@ -5,12 +5,14 @@ import paho.mqtt.client as mqtt
 def on_connect(client, userdata, flags, rc):
     client.subscribe('myhome/#')
 
+
 def on_message(client, userdata, msg):
     try:
         data = json.loads(msg.payload.decode())
     except Exception:
-        data = msg.payload
+        data = msg.payload.decode()
     print(f'{msg.topic} {data}')
+
 
 mqtt_client = mqtt.Client()
 mqtt_client.on_connect = on_connect

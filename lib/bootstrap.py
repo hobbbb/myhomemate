@@ -52,6 +52,7 @@ def setup():
         'mysqlclient==1.3.13',
         'python3-memcached',
         'paho-mqtt',
+        'APScheduler',
     ]:
         requirements.add(r)
 

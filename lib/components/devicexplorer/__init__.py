@@ -13,8 +13,10 @@ async def aio_initiate(engine, component_list):
 
     async def setup_explorer(component):
         module = importlib.import_module(f'components.{component.uniq_id}')
+        print(component.uniq_id)
         explorer = await engine.loop_create_task(module.get_explorer, component.data)
-        tracker.do_exploring(explorer, component)
+        if explorer:
+            tracker.do_exploring(explorer, component)
 
     tasks = [setup_explorer(c) for c in component_list]
     await asyncio.wait(tasks, loop=engine.loop)
@@ -29,30 +31,34 @@ class Tracker:
         device = self.devices.get(data['uniq_id'])
         if device:
             device = device.refresh(**data)
+            is_new = False
         else:
             device = Device(**data)
-            mqtt.publish_event('event/devicexplorer/new_device', 'new_device')
+            is_new = True
 
         now = time.time()
         if not device.last_saved or device.last_saved < now - 5 * 60:
             device.last_saved = now
             device.save()
 
+        if is_new is True:
+            mqtt.publish_event(const.EVENT_NEW_DEVICE_FOUND, device.id)
+            pass
+
         self.devices[device.uniq_id] = device
 
     def do_exploring(self, explorer, component):
         interval = component.data.get('interval', 10)
 
-        @self.engine.eventbus.listen(const.EVENT_TIME_CHANGED)
         def _explore_devices():
             loop_time = self.engine.loop.time()
-            r = round(loop_time) % interval
-            if not r:
-                # print(f'{loop_time} -- {r} -- {interval} -- {component.name}')
-                devices = explorer.exploring_devices()
-                for d in devices:
-                    d['component'] = component
-                    self.handle(d)
+            print(f'{loop_time} -- {interval} -- {component.name}')
+            devices = explorer.exploring_devices()
+            for d in devices:
+                d['component'] = component
+                self.handle(d)
+
+        self.engine.add_scheduler_job(_explore_devices, interval)
 
 
 class BaseExplorer:

@@ -57,7 +57,8 @@ class MikrotikExplorer(BaseExplorer):
                 self.user,
                 self.password,
                 port=int(self.port),
-                encoding='utf-8'
+                encoding='utf-8',
+                timeout=3,
             )
 
             try:
@@ -66,7 +67,6 @@ class MikrotikExplorer(BaseExplorer):
                     librouteros.exceptions.MultiTrapError,
                     librouteros.exceptions.ConnectionError):
                 routerboard = None
-                raise
 
             if routerboard:
                 logger.info('Connected to Mikrotik {}'.format(routerboard[0].get('model', 'Router')))
@@ -88,6 +88,7 @@ class MikrotikExplorer(BaseExplorer):
                 librouteros.exceptions.MultiTrapError,
                 librouteros.exceptions.ConnectionError) as api_error:
             logger.error('Connection error: {}'.format(api_error))
+            return False
 
         return True
 

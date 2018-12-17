@@ -13,9 +13,11 @@ import uvloop
 from collections import defaultdict
 from time import monotonic
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 from core import const
 from core.eventbus import EventBus
-from myhome import models, mqtt
+from myhome import models
 
 
 def run_timer(engine):
@@ -59,6 +61,7 @@ class HomeEngine:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
         self.eventbus = EventBus()
+        self.scheduler = AsyncIOScheduler()
         self.hold = None
 
     async def aio_run(self):
@@ -67,9 +70,14 @@ class HomeEngine:
         self.hold = asyncio.Event()
 
         self.eventbus.throw(const.EVENT_START_ENGINE)
-        mqtt.publish_event(f'event/{const.EVENT_START_ENGINE}')
+        # mqtt.publish_event(const.EVENT_START_ENGINE)
 
+        self.scheduler.print_jobs()
+        self.scheduler.start()
         await self.hold.wait()
+
+    def add_scheduler_job(self, target, seconds):
+        self.scheduler.add_job(target, 'interval', seconds=seconds)
 
     def loop_create_task(self, target, *args):
         if asyncio.iscoroutine(target):
