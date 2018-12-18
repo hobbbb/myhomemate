@@ -2,6 +2,8 @@ import asyncio
 import importlib
 import time
 
+from django.core.cache import cache
+
 from core import const
 from myhome.models import Device
 
@@ -29,19 +31,24 @@ class Tracker:
     def handle(self, data):
         device = self.devices.get(data['uniq_id'])
         if device:
-            device = device.refresh(**data)
-            is_new = False
+            for k in ['latitude', 'longitude', 'battery']:
+                setattr(device, k, data.get(k))
+
+            if device.is_tracker is True:
+                zones = cache.get('zones')
+                for _, zn in zones.items():
+                    in_zone = zn.verification(device.latitude, device.longitude)
+                    if device.zone != zn.id:
+                        self.engine.eventbus.throw(const.EVENT_ZONE_CHANGED, const.PLATO_ZONE)
+                        print('zone changed !!!!')
+                    if in_zone is True:
+                        device.zone = zn.id
+                    else:
+                        device.zone = None
         else:
             device = Device(**data)
-            is_new = True
-
-        now = time.time()
-        if not device.last_saved or device.last_saved < now - 5 * 60:
-            device.last_saved = now
-            device.save()
-
-        if is_new is True:
-            print('new_device')
+            self.engine.eventbus.throw(const.EVENT_NEW_DEVICE_FOUND)
+        device.save()
 
         self.devices[device.uniq_id] = device
 

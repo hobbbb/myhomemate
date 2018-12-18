@@ -10,9 +10,9 @@ class EventBus:
     def __init__(self):
         self._events = defaultdict(set)
 
-    def listen(self, event):
+    def listen(self, busevent):
         def outer(func):
-            self._events[event].add(func)
+            self._events[busevent].add(func)
 
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -22,14 +22,14 @@ class EventBus:
 
         return outer
 
-    def throw(self, event):
-        for func in self._event_funcs(event):
-            func()
+    def throw(self, busevent, *args, **kwargs):
+        for func in self._event_funcs(busevent):
+            func(*args, **kwargs)
 
-        if event != const.EVENT_ALL:
+        if busevent != const.EVENT_ALL:
             for func in self._event_funcs(const.EVENT_ALL):
-                func()
+                func(*args, **kwargs)
 
-    def _event_funcs(self, event):
-        for func in self._events[event]:
+    def _event_funcs(self, busevent):
+        for func in self._events[busevent]:
             yield func

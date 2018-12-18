@@ -2,7 +2,6 @@ import math
 from jsonfield import JSONField
 
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.db import models
 
 
@@ -17,7 +16,6 @@ class Component(models.Model):
 
 
 class Device(models.Model):
-    last_saved = None
     zone = None
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -33,26 +31,11 @@ class Device(models.Model):
     def __str__(self):
         return self.name
 
-    def refresh(self, **kwargs):
-        for k in ['latitude', 'longitude', 'battery']:
-            setattr(self, k, kwargs.get(k))
-
-        zones = cache.get('zones')
-        for _, zn in zones.items():
-            if not (self.latitude and self.longitude):
-                continue
-
-            in_zone = zn.verification(self.latitude, self.longitude)
-            if self.zone != zn.id:
-                print('zone changed !!!!')
-            if in_zone is True:
-                self.zone = zn.id
-            else:
-                self.zone = None
-
-            # print(self, ' in zone' if in_zone else ' out of zone')
-
-        return self
+    @property
+    def is_tracker(self):
+        if not (self.latitude and self.longitude):
+            return False
+        return True
 
 
 class Zone(models.Model):
@@ -91,19 +74,6 @@ class Entity(models.Model):
 class Script(models.Model):
     name = models.CharField(max_length=200, unique=True)
     text = models.TextField()
-
-
-# class AutomationTrigger(models.Model):
-#     entity = models.ForeignKey(Entity, on_delete=models.CASCADE, null=True)
-#     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True)
-
-
-# class AutomationCondition(models.Model):
-#     pass
-
-
-# class AutomationAction(models.Model):
-#     service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True)
 
 
 # class Automation(models.Model):

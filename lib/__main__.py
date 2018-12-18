@@ -34,25 +34,30 @@ def run_timer(engine):
 async def automatization(engine):
     print('automatization')
 
-    atmz = {
-        'alias1': {
+    atmz = [
+        {
             'trigger': {
                 'platform': 'zone',
-                'platform_id': 1,
+                'entity_id': 1,
                 'event': 'enter',
             },
+            'condition': {},
+            'action': {},
         },
-        'alias2': {
+        {
             'trigger': {
                 'platform': 'telegram_bot',
             },
+            'condition': {},
+            'action': {},
         },
-    }
+    ]
 
     @engine.eventbus.listen(const.EVENT_ALL)
-    def test():
-        # print(atmz)
-        pass
+    def test(platform, **kwargs):
+        for a in atmz:
+            if a['trigger']['platform'] == platform:
+                print(a)
 
     return True
 
@@ -69,7 +74,7 @@ class HomeEngine:
 
         self.hold = asyncio.Event()
 
-        self.eventbus.throw(const.EVENT_START_ENGINE)
+        self.eventbus.throw(const.EVENT_START_ENGINE, const.PLATO_ZONE, event='enter')
 
         self.scheduler.print_jobs()
         self.scheduler.start()
@@ -94,9 +99,9 @@ class HomeEngine:
 async def aio_configuration(engine):
     print('aio_configuration')
 
-    @engine.eventbus.listen(const.EVENT_START_ENGINE)
-    def _run_timer():
-        run_timer(engine)
+    # @engine.eventbus.listen(const.EVENT_START_ENGINE)
+    # def _run_timer():
+    #     run_timer(engine)
 
     zones = {z.id: z for z in models.Zone.objects.all()}
     cache.set('zones', zones, None)
@@ -113,9 +118,15 @@ async def aio_configuration(engine):
     tasks = []
     for name, data in components.items():
         module = importlib.import_module(f'components.{name}')
-        tasks.append(module.aio_initiate(engine, data))
+        # tasks.append(module.aio_initiate(engine, data))
 
     tasks.append(automatization(engine))
+
+    qs = models.Script.objects.all()
+    for row in qs:
+        def _script():
+            exec(row.text)
+        # engine.add_scheduler_job(_script, 1)
 
     await asyncio.wait(tasks)
 
