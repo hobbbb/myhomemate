@@ -33,3 +33,13 @@ class EventBus:
     def _event_funcs(self, busevent):
         for func in self._events[busevent]:
             yield func
+
+
+class ServiceRegistry:
+    def __init__(self):
+        self._services = defaultdict(set)
+
+    def register(self, component, service):
+        print('component', component)
+        for k, v in service.items():
+            print(k, v)

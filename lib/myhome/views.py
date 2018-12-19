@@ -56,12 +56,13 @@ def component_edit(request, id):
 
 
 def device_list(request, component_id=None):
-    component = models.Component.objects.get(id=1)
-    component_module = importlib.import_module(f'components.{component.uniq_id}')
-    editable = True if hasattr(component_module, 'DeviceSetupForm') else False
+    # component = models.Component.objects.get(id=1)
+    # component_module = importlib.import_module(f'components.{component.uniq_id}')
+    # editable = True if hasattr(component_module, 'DeviceSetupForm') else False
+    editable = True
 
     data = {
-        'devices': component.device_set.all(),
+        'devices': models.Device.objects.all(),
         'editable': editable,
     }
     return render(request, 'devices.html', data)
@@ -69,7 +70,7 @@ def device_list(request, component_id=None):
 
 def device_edit(request, id):
     device = models.Device.objects.get(id=id)
-    component_module = importlib.import_module(f'components.{device.component.name}')
+    component_module = importlib.import_module(f'components.{device.component.uniq_id}')
 
     if request.method == 'POST':
         form = component_module.DeviceSetupForm(request.POST)

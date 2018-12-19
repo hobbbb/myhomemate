@@ -10,7 +10,9 @@ from core import const
 
 NAME = 'Телеграм'
 REQUIREMENTS = ['python-telegram-bot', 'PySocks']
-
+SERVICE = {
+    'notify': 'send_message',
+}
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +32,6 @@ class ComponentSetupForm(forms.Form):
 
 
 async def aio_initiate(engine, component):
-    await asyncio.sleep(1)
     print('telegram')
 
     config = component.data
@@ -53,11 +54,14 @@ async def aio_initiate(engine, component):
 
     bot = TelegramBot(config)
 
-    @engine.eventbus.listen(const.EVENT_START_ENGINE)
-    def _start_polling():
-        bot.start_polling()
+    engine.service.register(__name__, SERVICE)
 
-    return True
+    # @engine.eventbus.listen(const.EVENT_START_ENGINE)
+    # def _start_polling():
+    #     bot.start_polling()
+
+    await asyncio.sleep(0)
+    # return True
 
 
 class ScriptError(Exception):
@@ -73,6 +77,10 @@ class TelegramBot:
         from telegram import Bot
         from telegram.utils.request import Request
         from telegram.ext import Updater, MessageHandler, Filters
+
+        if not config.get('token'):
+            logger.error('TelegramBot - not token')
+            return
 
         if config.get('proxy_url'):
             proxy_params = {'username': config.get('proxy_user'), 'password': config.get('proxy_password')}

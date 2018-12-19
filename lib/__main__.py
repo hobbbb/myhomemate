@@ -16,7 +16,7 @@ from time import monotonic
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from core import const
-from core.eventbus import EventBus
+from core.eventbus import EventBus, ServiceRegistry
 from myhome import models
 
 
@@ -75,6 +75,7 @@ class HomeEngine:
     def __init__(self):
         self.loop = asyncio.get_event_loop()
         self.eventbus = EventBus()
+        self.service = ServiceRegistry()
         self.scheduler = AsyncIOScheduler()
         self.hold = None
 
@@ -127,7 +128,7 @@ async def aio_configuration(engine):
     tasks = []
     for name, data in components.items():
         module = importlib.import_module(f'components.{name}')
-        # tasks.append(module.aio_initiate(engine, data))
+        tasks.append(module.aio_initiate(engine, data))
 
     tasks.append(automatization(engine))
 
