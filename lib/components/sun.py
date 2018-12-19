@@ -4,19 +4,11 @@ import logging
 
 from django import forms
 
-from myhome.api import register_component
 
-
+NAME = 'Солнце'
 REQUIREMENTS = ['astral']
 
-
 logger = logging.getLogger(__name__)
-
-
-def register():
-    register_component({
-        'name': 'Солнце',
-    })
 
 
 class ComponentSetupForm(forms.Form):

@@ -38,6 +38,11 @@ class Device(models.Model):
         return True
 
 
+# class Service(models.Model):
+#     component = models.ForeignKey(Component, on_delete=models.CASCADE)
+#     uniq_id = models.CharField(max_length=100, unique=True)
+
+
 class Zone(models.Model):
     name = models.CharField(max_length=50)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -78,6 +83,6 @@ class Script(models.Model):
 
 # class Automation(models.Model):
 #     name = models.CharField(max_length=100)
-#     trigger = models.ForeignKey(AutomationTrigger, on_delete=models.CASCADE)
-#     # condition = models.ForeignKey(AutomationCondition, on_delete=models.CASCADE, null=True)
-#     action = models.ForeignKey(AutomationAction, on_delete=models.CASCADE)
+#     trigger = JSONField()
+#     condition = JSONField()
+#     action = JSONField()

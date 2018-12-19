@@ -42,7 +42,10 @@ async def automatization(engine):
                 'event': 'enter',
             },
             'condition': {},
-            'action': {},
+            'action': {
+                'service': 'telegram_bot.notify',
+                'data': 'test',
+            },
         },
         {
             'trigger': {
@@ -54,10 +57,16 @@ async def automatization(engine):
     ]
 
     @engine.eventbus.listen(const.EVENT_ALL)
-    def test(platform, **kwargs):
+    def test(data):
         for a in atmz:
-            if a['trigger']['platform'] == platform:
-                print(a)
+            if a['trigger']['platform'] != data.get('platform'):
+                continue
+            if a['trigger']['entity_id'] != data.get('entity_id'):
+                continue
+            if a['trigger']['event'] != data.get('event'):
+                continue
+
+            print(a)
 
     return True
 
@@ -74,7 +83,7 @@ class HomeEngine:
 
         self.hold = asyncio.Event()
 
-        self.eventbus.throw(const.EVENT_START_ENGINE, const.PLATO_ZONE, event='enter')
+        self.eventbus.throw(const.EVENT_START_ENGINE, {'platform': const.PLATO_ZONE, 'event': 'enter', 'entity_id': 1})
 
         self.scheduler.print_jobs()
         self.scheduler.start()

@@ -10,6 +10,8 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myhome.settings')
 django.setup()
 
+from myhome.api import register_component
+
 
 def get_module_from_path(path):
     file = re.sub(r'(^lib/)|((/__init__)?\.py\n$)', '', path)
@@ -24,11 +26,11 @@ def get_module_from_path(path):
 
 def register():
     paths = subprocess.Popen(
-        'grep -r -l register_component lib/components/ | grep -p ".py$"', shell=True, stdout=subprocess.PIPE
+        'grep -r -l NAME lib/components/ | grep -p ".py$"', shell=True, stdout=subprocess.PIPE
     )
     for p in paths.stdout.readlines():
         module = get_module_from_path(p.decode('utf-8'))
-        module.register()
+        register_component(module)
 
 
 def setup():

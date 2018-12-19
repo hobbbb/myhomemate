@@ -9,16 +9,11 @@ from django import forms
 from . import BaseExplorer
 
 
+NAME = 'Mikrotik'
 REQUIREMENTS = ['librouteros']
 
 
 logger = logging.getLogger(__name__)
-
-
-def register():
-    register_component({
-        'name': 'Mikrotik',
-    })
 
 
 class ComponentSetupForm(forms.Form):

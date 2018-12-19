@@ -8,17 +8,11 @@ import urllib3
 from django import forms
 
 from . import BaseExplorer
-from myhome.api import register_component  # , get_component_config, update_devices
 
+NAME = 'iCloud devices'
 
-logger = logging.getLogger(__name__)
 urllib3.disable_warnings()
-
-
-def register():
-    register_component({
-        'name': 'iCloud devices',
-    })
+logger = logging.getLogger(__name__)
 
 
 class ComponentSetupForm(forms.Form):

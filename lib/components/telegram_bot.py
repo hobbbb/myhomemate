@@ -6,9 +6,9 @@ import logging
 from django import forms
 
 from core import const
-from myhome.api import register_component
 
 
+NAME = 'Телеграм'
 REQUIREMENTS = ['python-telegram-bot', 'PySocks']
 
 
@@ -20,12 +20,6 @@ logger = logging.getLogger(__name__)
 #     proxy_params = {'username': 'friends', 'password': 'asdfghjkl'},
 #     chat_id = 41129935,
 # )
-
-
-def register():
-    register_component({
-        'name': 'Телеграм',
-    })
 
 
 class ComponentSetupForm(forms.Form):
